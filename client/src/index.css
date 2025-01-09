@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Customize text inside the document viewer */
+.custom-doc-viewer * {
+    color: #e0dfdf !important; /* Example for changing text color */
+    background-color: #000000 !important;
+}
+

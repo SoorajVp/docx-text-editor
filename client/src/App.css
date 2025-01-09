@@ -1,0 +1,159 @@
+body {
+    background: linear-gradient(to bottom, #363636, #101010);
+    /* or use this shorthand property */
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+.App {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.view-docx {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    /* border-radius: 10px; */
+    background-color: #000000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.box-head {
+    font-weight: 500;
+    font-size: large;
+    color: beige;
+    padding-top: 5px;
+}
+
+.input-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.form-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #3d3d3d;
+    /* border-radius: 5px; */
+    background-color: #242424;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s ease;
+    padding-right: 40px; /* Space for the paste button */
+    color: #ffffff;
+}
+
+.form-input:focus {
+    border-color: #d87502;
+}
+
+.paste-button {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: #e8e7e6;
+    outline: none;
+}
+
+.paste-button:hover {
+    color: #eb820a;
+}
+
+.form-button {
+    padding: 8px;
+    background-color: #d87502;
+    color: white;
+    border: none;
+    /* border-radius: 5px; */
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.form-button:hover {
+    background-color: #c16905;
+}
+
+.form-button:active {
+    background-color: rgb(189, 102, 4);
+}
+
+.error-text {
+    color: #ff4d4d;
+    font-size: 12px;
+    /* margin: 5px 0 0; */
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .view-docx {
+        padding: 15px;
+    }
+}
+
+
+
+
+.primary-button {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    min-width: 9rem;
+    background-color: #d87502;
+    color: white;
+    border: none;
+    /* border-radius: 5px; */
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.primary-button:hover {
+    background-color: #c16905;
+}
+
+.primary-button:active {
+    background-color: rgb(189, 102, 4);
+}
+
+
+.secondary-button {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    background-color: #242424;
+    color: white;
+    border: none;
+    /* border-radius: 5px; */
+    font-size: 14px;
+    cursor: pointer;
+    border: #848383 1px solid;
+    transition: background-color 0.3s ease;
+}
+
+.secondary-button:hover {
+    background-color: #3c3c3c;
+    border-color: #d87502;
+}
+
+.secondary-button:active {
+    background-color: #525252;
+}
