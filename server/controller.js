@@ -4,6 +4,7 @@ import cloudinary from "./config/cloudinary.js";
 import Helper from "./utils/helper.js"
 import JSZip from "jszip";
 import axios from "axios";
+import helper from "./utils/helper.js";
 
 export const GetDocumentTexts = async(req, res) => {
     const { documentUrl } = req.query;
@@ -63,6 +64,7 @@ export const UpdateDocument = async(req, res) => {
     }
 
     try {
+        const fileName = helper.GenerateFileName(documentUrl)
         const response = await axios.get(documentUrl, { responseType: "arraybuffer" });
         const originalDoc = Buffer.from(response.data);
 
@@ -106,7 +108,7 @@ export const UpdateDocument = async(req, res) => {
         // Upload the updated document to Cloudinary
         const uploadResult = await new Promise((resolve, reject) => {
             cloudinary.uploader.upload_stream(
-                { resource_type: "auto", public_id: `updated_${uuidv4()}.docx` },
+                { resource_type: "auto", public_id: fileName },
                 (error, result) => (error ? reject(error) : resolve(result))
             ).end(updatedDoc);
         });

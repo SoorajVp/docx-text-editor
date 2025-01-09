@@ -12,4 +12,17 @@ const ConvertDocToXML = async (docxtUrl) => {
     return documentXml
 }
 
-export default { ConvertDocToXML }
+
+const url = "https://res.cloudinary.com/dq81uwd0m/raw/upload/v1736405316/updated_d14d75b9-954a-4b79-9e61-560fecf5bbb4.docx";
+
+// Function to generate a 4-digit random number
+const generateRandomNumber = () => Math.floor(1000 + Math.random() * 9000);
+
+// Function to get the filename and add a random number
+const GenerateFileName = (url) => {
+    const fileName = url.split('/').pop(); 
+    return fileName
+};
+
+
+export default { ConvertDocToXML, GenerateFileName }
