@@ -4,7 +4,7 @@ A simple web application for editing `.docx` files. Users can upload a document,
 
 ## Features
 - Upload a `.docx` file URL.
-- Unzip the `.docx` into editable `XML` format.
+- Unzip the document into editable `XML` format.
 - Edit the document's text content.
 - Save and upload the updated document to Cloudinary.
 

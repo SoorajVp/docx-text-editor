@@ -3,6 +3,7 @@ import apiClient from '../api/axios';
 import { MainContext } from '../contexts/Provider';
 import { IoIosRedo, IoIosUndo } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
+import { FiDownload } from "react-icons/fi";
 
 const Header = () => {
   const [saving, setSaving] = useState(false);
@@ -62,6 +63,29 @@ const Header = () => {
     }
   };
 
+  const handleDownload = async () => {
+    try {
+      const url = urlContext[idContext]
+      const fileName = url.split('/').pop();
+
+      // Fetch the file
+      const response = await fetch(url);
+      const blob = await response.blob();
+
+      // Create a download link
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = fileName; // Use the extracted file name
+      link.click();
+
+      // Clean up
+      URL.revokeObjectURL(link.href);
+    } catch (err) {
+      console.error('Download failed:', err);
+    }
+  };
+
+
   return (
     <header className='px-6 py-3 w-full flex justify-between items-center bg-black'>
       <div className='flex items-center gap-2'>
@@ -87,6 +111,11 @@ const Header = () => {
             <IoIosRedo size={15} />
           </button>
         }
+        <button
+          className="border border-slate-400 text-gray-200 bg-neutral-800 p-2 hover:border-orange-400 hover:bg-neutral-700 transition duration-500 ease-in-out"
+          onClick={handleDownload} >
+          <FiDownload size={15} />
+        </button>
         <button className="secondary-button" onClick={onDiscard}>
           Discard
         </button>
