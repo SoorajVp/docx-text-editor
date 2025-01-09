@@ -36,10 +36,20 @@ A simple web application for editing `.docx` files. Users can upload a document,
 2. Start the backend:
    ```bash
    cd server
+   ```
+    - Create the .env file
+    ```bash
+    PORT = 4000
+    CLOUDINARY_CLOUD_NAME =
+    CLOUDINARY_API_KEY =
+    CLOUDINARY_API_SECRET = 
+    CLOUDINARY_UPLOAD_PRESET =  
+    ```
+    ```bash
    npm run dev
    ```
 
-3. Open the app in your browser at `http://localhost:3000`.
+<!-- 3. Open the app in your browser at `http://localhost:3000`. -->
 
 ## Usage
 1. Enter the URL of a `.docx` file.
