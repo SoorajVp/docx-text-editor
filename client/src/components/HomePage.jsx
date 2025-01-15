@@ -29,7 +29,7 @@ const HomePage = () => {
     };
 
     const handlePaste = async () => {
-        const text = await navigator.clipboard.readText();
+        const text = await navigator.clipboard.readText(); 
         setDocUrl(text);
         setError("");
     };
@@ -45,7 +45,7 @@ const HomePage = () => {
                             type="text"
                             value={docUrl}
                             onChange={handleChange}
-                            placeholder="https://.../document.docx"
+                            placeholder="Type or paste here"
                             className="form-input"
                         />
                         <button className="paste-button" onClick={handlePaste}>

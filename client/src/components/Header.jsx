@@ -1,8 +1,9 @@
 import React, { useContext, useState } from 'react'
 import apiClient from '../api/axios';
 import { MainContext } from '../contexts/Provider';
-import { IoIosRedo, IoIosUndo } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
+import { IoIosRedo, IoIosUndo } from "react-icons/io";
+import { TbReload } from "react-icons/tb";
 import { FiDownload } from "react-icons/fi";
 
 const Header = () => {
@@ -115,6 +116,11 @@ const Header = () => {
           className="border border-slate-400 text-gray-200 bg-neutral-800 p-2 hover:border-orange-400 hover:bg-neutral-700 transition duration-500 ease-in-out"
           onClick={handleDownload} >
           <FiDownload size={15} />
+        </button>
+        <button
+          className="border border-slate-400 text-gray-200 bg-neutral-800 p-2 hover:border-orange-400 hover:bg-neutral-700 transition duration-500 ease-in-out"
+          onClick={() => location.reload()} >
+          <TbReload size={15} />
         </button>
         <button className="secondary-button" onClick={onDiscard}>
           Discard

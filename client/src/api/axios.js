@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// const serverBaseUrl = "http://localhost:4000/api";
-const serverBaseUrl = "http://192.168.29.5:4000/api";
+const serverBaseUrl = "http://localhost:4000/api";
+// const serverBaseUrl = "http://192.168.29.5:4000/api";
 
 // Create an Axios instance
 const apiClient = axios.create({
