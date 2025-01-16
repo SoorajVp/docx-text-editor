@@ -22,7 +22,6 @@ const HomePage = () => {
         }
 
         let data = [docUrl]
-        console.log("this is data => ", data)
         setUrlContext([docUrl])
         localStorage.setItem("url_value", JSON.stringify([docUrl]));
         window.location.reload();

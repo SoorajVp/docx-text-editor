@@ -25,7 +25,6 @@ const Header = () => {
         documentUrl: url,
         updatedTextBlocks: textContext,
       };
-      console.log('idContext, urlContext   =>', idContext, urlContext)
       const response = await apiClient.post("/update-document", payload);
       let data = urlContext
       data.unshift(response.data?.updatedUrl)
@@ -34,7 +33,6 @@ const Header = () => {
       // setUrlContext(data);
       // setIdContext(0)
       location.reload()
-      console.log('idContext, urlContext  last =>', idContext, urlContext)
     } catch (error) {
       alert("Failed to save document. Please try again.");
     } finally {
@@ -91,7 +89,7 @@ const Header = () => {
     <header className='px-6 py-3 w-full flex justify-between items-center bg-black'>
       <div className='flex items-center gap-2'>
 
-        <h2 className='text-gray-200 font-semibold text-lg'>
+        <h2 className='hidden md:block text-gray-200 font-semibold text-lg'>
           Edit Document
         </h2>
       </div>

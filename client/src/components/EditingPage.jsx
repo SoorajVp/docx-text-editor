@@ -10,8 +10,6 @@ const EditingPage = () => {
     const { idContext, urlContext, textContext, setTextContext } = useContext(MainContext);
 
     useEffect(() => {
-        console.log("Fetching........", urlContext?.length);
-
         if (urlContext?.length === 0) {
             console.error("Document URL is missing.");
             return;
