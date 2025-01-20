@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react'
 import ViewDocument from './ViewDocument'
 import apiClient from '../api/axios';
-import TextBlocks from './TextBlocks';
 import { MainContext } from '../contexts/Provider';
 import Header from './Header';
+import ContentList from './ContentList';
 
 const EditingPage = () => {
     const [fetching, setFetching] = useState(false)
@@ -32,19 +32,13 @@ const EditingPage = () => {
         fetchAndParseDocument();
     }, [urlContext, idContext]);
 
-    const handleTextChange = (index, value) => {
-        const updatedBlocks = [...textContext];
-        updatedBlocks[index] = value;
-        setTextContext(updatedBlocks);
-    };
-
     return (
         <div className="h-screen flex flex-col">
             <Header />
             <main className="flex-1 overflow-y-auto p-1">
                 <div className='grid lg:grid-cols-2 gap-2 h-full p-1'>
                     <ViewDocument url={urlContext[idContext]} />
-                    <TextBlocks fetching={fetching} handleTextChange={handleTextChange} />
+                    <ContentList fetching={fetching} />
                 </div>
             </main>
         </div>

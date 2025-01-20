@@ -86,10 +86,10 @@ const Header = () => {
 
 
   return (
-    <header className='px-6 py-3 w-full flex justify-between items-center bg-black'>
+    <header className='px-6 py-3 w-full flex justify-between items-center bg-black font-serif'>
       <div className='flex items-center gap-2'>
 
-        <h2 className='hidden md:block text-gray-200 font-semibold text-lg'>
+        <h2 className='hidden md:block text-gray-200 font-semibold text-lg truncate'>
           Edit Document
         </h2>
       </div>

@@ -47,7 +47,7 @@ export const GetDocumentTexts = async (req, res) => {
         // Send the text blocks as a response
         res.status(200).json({ textBlocks });
     } catch (error) {
-        console.error("Error:", error.message);
+        console.error("Error:", error);
         res.status(500).json({ message: "Failed to fetch or parse document" });
     }
 };

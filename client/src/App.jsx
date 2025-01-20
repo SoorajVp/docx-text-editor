@@ -1,9 +1,9 @@
 
 import { useContext, useEffect } from 'react'
-import './App.css'
+import { MainContext } from './contexts/Provider'
 import HomePage from './components/HomePage'
 import EditingPage from './components/EditingPage'
-import { MainContext } from './contexts/Provider'
+import './App.css'
 
 function App() {
   const urlItems = JSON.parse(localStorage.getItem("url_value"));

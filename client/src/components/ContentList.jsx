@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useRef, useCallback } from "react";
 import { MainContext } from "../contexts/Provider";
+import ContentBlock from "./Textblock";
 
-const TextBlocks = ({ fetching }) => {
+const ContentList = ({ fetching }) => {
     const textareaRefs = useRef([]);
     const { textContext, setTextContext } = useContext(MainContext);
 
@@ -34,19 +35,7 @@ const TextBlocks = ({ fetching }) => {
                 <div className="text-center text-gray-300 pt-6">Loading document...</div>
             ) : textContext?.length > 0 ? (
                 textContext.map((block, index) => (
-                    <textarea
-                        ref={(el) => (textareaRefs.current[index] = el)}
-                        key={block.id} // Use block.id as the unique key
-                        value={block.text || ""} // Set value from block.text
-                        onChange={(e) => handleTextChange(block.id, e.target.value)} // Update text using block.id
-                        className="w-full text-sm text-gray-200 border border-gray-700 focus:border-orange-300 outline-none transition duration-500 ease-in-out p-2 mb-1"
-                        style={{
-                            resize: "none",
-                            overflow: "hidden",
-                            backgroundColor: "#000",
-                            lineHeight: "1.5",
-                        }}
-                    />
+                    <ContentBlock block={block} key={block.id} />
                 ))
             ) : (
                 <div className="text-center text-gray-300 pt-6">No text blocks to edit.</div>
@@ -55,4 +44,4 @@ const TextBlocks = ({ fetching }) => {
     );
 };
 
-export default TextBlocks;
+export default ContentList;
