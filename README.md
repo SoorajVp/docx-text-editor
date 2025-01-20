@@ -38,8 +38,14 @@ A simple web application for editing `.docx` files. Users can upload a document,
    cd server
    ```
     - Create the .env file
+
     ```bash
-    PORT = 4000
+    # Ensure the client-side configuration matches this server. 
+    # In the client file (client/src/api/axios.js), match the server port.
+    PORT=4000
+
+    # Optional: You can use Cloudinary for storing documents. 
+    # Alternatively, documents can be stored in local folders, Google Cloud Storage (GCP), AWS S3, or other storage solutions.
     CLOUDINARY_CLOUD_NAME =
     CLOUDINARY_API_KEY =
     CLOUDINARY_API_SECRET = 
