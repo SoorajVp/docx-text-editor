@@ -29,9 +29,10 @@ const ContentBlock = ({ block, index }) => {
     return (
         <textarea
             ref={textareaRef}
+            rows={1}
             value={block.text || ""}
             onChange={(e) => handleTextChange(e.target.value)}
-            className="w-full text-sm text-gray-200 border border-gray-700 focus:border-orange-300 outline-none transition duration-500 ease-in-out p-2 mb-1"
+            className="w-full text-sm text-gray-200 border border-gray-700 focus:border-orange-300 outline-none transition duration-500 ease-in-out p-3"
             style={{
                 resize: "none",
                 overflow: "hidden",
