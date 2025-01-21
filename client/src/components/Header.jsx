@@ -52,18 +52,19 @@ const Header = () => {
     setUrlContext([])
     setIdContext(0);
     localStorage.removeItem("url_value")
-    // location.href = "/" ;
-    toast.success("Changes discarded", {
-      style: {
-        border: '1px solid #fca03d',
-        borderRadius: '0px',
-        padding: '8px',
-        color: '#fff',
-        backgroundColor: '#1a1a1a',
-        width: "13rem"
-      },
-      icon: "✔️"
-    });
+   
+    location.href = "/" ;
+    // toast.success("Changes discarded", {
+    //   style: {
+    //     border: '1px solid #fca03d',
+    //     borderRadius: '0px',
+    //     padding: '8px',
+    //     color: '#fff',
+    //     backgroundColor: '#1a1a1a',
+    //     width: "13rem"
+    //   },
+    //   icon: "✔️"
+    // });
   }
 
   // Handle Undo

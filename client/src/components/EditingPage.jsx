@@ -17,7 +17,7 @@ const EditingPage = () => {
 
         const fetchAndParseDocument = async () => {
             setFetching(true);
-            const url = urlContext[idContext]
+            const url = urlContext[idContext || 0]
             try {
                 const response = await apiClient.get(`/get-text-blocks?documentUrl=${url}`);
                 setTextContext(response.data.textBlocks || []);

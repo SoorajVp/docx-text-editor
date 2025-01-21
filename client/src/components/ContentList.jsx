@@ -16,19 +16,6 @@ const ContentList = ({ fetching }) => {
         });
     }, [textContext]);
 
-    // Handle text change for a specific block using its unique id
-    const handleTextChange = useCallback(
-        (id, value) => {
-            setTextContext((prev) => {
-                const updatedBlocks = prev.map((block) =>
-                    block.id === id ? { ...block, text: value } : block
-                );
-                return updatedBlocks;
-            });
-        },
-        [setTextContext]
-    );
-
     return (
         <div className="flex-1 overflow-y-auto">
             {fetching ? (
