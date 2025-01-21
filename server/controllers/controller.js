@@ -6,7 +6,6 @@ import helper from "../utils/helper.js";
 
 export const GetDocumentTexts = async (req, res) => {
     const { documentUrl } = req.query;
-
     if (!documentUrl) {
         return res.status(400).json({ message: "Invalid payload" });
     }
@@ -18,7 +17,7 @@ export const GetDocumentTexts = async (req, res) => {
         // Load the DOCX as a ZIP archive
         const zip = await JSZip.loadAsync(originalDoc);
         const documentXml = await zip.file("word/document.xml").async("string");
-
+        // console.log('documentXml ---------------------> ', documentXml)
         // Parse the XML content
         const parser = new DOMParser();
         const doc = parser.parseFromString(documentXml, "application/xml");
@@ -45,7 +44,7 @@ export const GetDocumentTexts = async (req, res) => {
         });
 
         // Send the text blocks as a response
-        res.status(200).json({ textBlocks });
+        res.status(200).json({ textBlocks, message: "Text blocks fetched" });
     } catch (error) {
         console.error("Error:", error);
         res.status(500).json({ message: "Failed to fetch or parse document" });
@@ -134,7 +133,7 @@ export const UpdateDocument = async (req, res) => {
         });
 
         // Return the URL of the uploaded document
-        res.status(200).json({
+        res.status(201).json({
             message: "Document updated successfully",
             updatedUrl: uploadResult.secure_url,
             size: updatedDoc.length,

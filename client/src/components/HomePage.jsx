@@ -20,8 +20,6 @@ const HomePage = () => {
             setError("Please enter a valid .docx URL");
             return;
         }
-
-        let data = [docUrl]
         setUrlContext([docUrl])
         localStorage.setItem("url_value", JSON.stringify([docUrl]));
         window.location.reload();

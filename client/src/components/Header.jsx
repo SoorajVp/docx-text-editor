@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { IoIosRedo, IoIosUndo } from "react-icons/io";
 import { TbReload } from "react-icons/tb";
 import { FiDownload } from "react-icons/fi";
+import toast from 'react-hot-toast';
 
 const Header = () => {
   const [saving, setSaving] = useState(false);
@@ -13,7 +14,7 @@ const Header = () => {
 
   // Save changes to the document
   const handleSubmit = async () => {
-    const url = urlContext[idContext]
+    const url = urlContext[idContext];
     if (!url || textContext.length === 0) {
       alert("Cannot submit: either the URL or text blocks are missing.");
       return;
@@ -25,64 +26,155 @@ const Header = () => {
         documentUrl: url,
         updatedTextBlocks: textContext,
       };
+
       const response = await apiClient.post("/update-document", payload);
-      let data = urlContext
-      data.unshift(response.data?.updatedUrl)
-      localStorage.setItem("url_value", JSON.stringify(data));
-      alert("Document saved successfully!");
-      // setUrlContext(data);
-      // setIdContext(0)
-      location.reload()
+      const updatedUrl = response?.data?.updatedUrl;
+      if (!updatedUrl) {
+        throw new Error("Invalid response from the server");
+      }
+
+      // Update context immutably
+      setUrlContext((prevUrls) => [updatedUrl, ...prevUrls]);
+      setIdContext(0);
+      localStorage.setItem("url_value", JSON.stringify([updatedUrl, ...urlContext]));
+
     } catch (error) {
       alert("Failed to save document. Please try again.");
+      console.error(error);
     } finally {
       setSaving(false);
     }
   };
 
+
   // Handle discard
   const onDiscard = () => {
+    setUrlContext([])
+    setIdContext(0);
     localStorage.removeItem("url_value")
-    location.href = "/" ;
+    // location.href = "/" ;
+    toast.success("Changes discarded", {
+      style: {
+        border: '1px solid #fca03d',
+        borderRadius: '0px',
+        padding: '8px',
+        color: '#fff',
+        backgroundColor: '#1a1a1a',
+        width: "13rem"
+      },
+      icon: "✔️"
+    });
   }
 
   // Handle Undo
   const handleUndo = () => {
+    toast.dismiss()
     if (idContext < urlContext.length - 1) {
       setIdContext((prevIndex) => Number(prevIndex) + 1);
       navigate(`?id=${Number(idContext) + 1}`)
+      toast("Changes Reverted", {
+        style: {
+          border: '1px solid #fca03d',
+          borderRadius: '0px',
+          padding: '8px',
+          color: '#fff',
+          backgroundColor: '#1a1a1a',
+          width: "11rem"
+        },
+        icon: "➖"
+      });
     }
   };
 
   // Handle Redo
   const handleRedo = () => {
+    toast.dismiss()
     if (idContext > 0) {
       setIdContext((prevIndex) => prevIndex - 1);
       navigate(`?id=${Number(idContext) - 1}`)
+      toast("Redo Changes", {
+        style: {
+          border: '1px solid #fca03d',
+          borderRadius: '0px',
+          padding: '8px',
+          color: '#fff',
+          backgroundColor: '#1a1a1a',
+          width: "11rem"
+        },
+        icon: "➕"
+      });
     }
   };
 
   const handleDownload = async () => {
     try {
-      const url = urlContext[idContext]
+      // Show a loading toast while downloading
+      const loadingToastId = toast.loading('Document downloading...', {
+        style: {
+          border: '1px solid #fca03d',
+          borderRadius: '0px',
+          padding: '8px',
+          color: '#fff',
+          backgroundColor: '#1a1a1a',
+        },
+        iconTheme: {
+          primary: '#fcc481',
+          secondary: '#ff9417',
+        },
+      });
+
+      const url = urlContext[idContext];
       const fileName = url.split('/').pop();
 
       // Fetch the file
       const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch: ${response.statusText}`);
+      }
+
       const blob = await response.blob();
 
       // Create a download link
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = fileName; // Use the extracted file name
+      link.download = fileName;
       link.click();
 
       // Clean up
       URL.revokeObjectURL(link.href);
+
+      // Update toast to success
+      toast.dismiss(loadingToastId); // Dismiss the loading toast
+      toast.success('Download completed successfully!', {
+        style: {
+          border: '1px solid #fca03d',
+          borderRadius: '0px',
+          padding: '8px',
+          color: '#fff',
+          backgroundColor: '#1a1a1a',
+        },
+        icon: "✔️"
+      });
     } catch (err) {
+      // Remove loading toast and show error toast
+      toast.dismiss();
+      toast.error('Download failed. Please try again.', {
+        style: {
+          border: '1px solid #fca03d',
+          borderRadius: '0px',
+          padding: '8px',
+          color: '#fff',
+          backgroundColor: '#1a1a1a',
+        },
+        iconTheme: {
+          primary: '#ff1e1e',
+          secondary: '#FFFAEE',
+        },
+      });
       console.error('Download failed:', err);
     }
   };
+
 
 
   return (

@@ -16,7 +16,7 @@ function App() {
   useEffect(() => {
     setIdContext(urlId || 0)
     setUrlContext(urlItems || null)
-  }, [urlId])
+  }, [])
 
   return urlItems?.length > 0 ?
     <EditingPage /> :
