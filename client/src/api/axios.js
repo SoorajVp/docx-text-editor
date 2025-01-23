@@ -20,7 +20,7 @@ apiClient.interceptors.response.use(
                     border: '1px solid #fca03d',
                     borderRadius: '0px',
                     padding: '8px',
-                    color: '#fff',
+                    color: '#fff', 
                     backgroundColor: '#1a1a1a',
                 },
                 icon: "✔️"
@@ -28,6 +28,7 @@ apiClient.interceptors.response.use(
         }
         return response;
     },
+    
     (error) => {
         // Handle errors globally
         console.log('Axios response Error => ', error);
@@ -48,4 +49,4 @@ apiClient.interceptors.response.use(
     }
 );
 
-export default apiClient;
+export default apiClient; 

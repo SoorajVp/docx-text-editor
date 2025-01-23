@@ -35,7 +35,7 @@ const EditingPage = () => {
     return (
         <div className="h-screen flex flex-col">
             <Header />
-            <main className="flex-1 overflow-y-auto p-1">
+            <main className="flex-1 overflow-y-auto ">
                 <div className='grid lg:grid-cols-2 gap-2 h-full p-1'>
                     <ViewDocument url={urlContext[idContext]} />
                     <ContentList fetching={fetching} />

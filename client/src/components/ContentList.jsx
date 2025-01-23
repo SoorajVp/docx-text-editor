@@ -4,7 +4,7 @@ import ContentBlock from "./Textblock";
 
 const ContentList = ({ fetching }) => {
     const textareaRefs = useRef([]);
-    const { textContext, setTextContext } = useContext(MainContext);
+    const { textContext } = useContext(MainContext);
 
     // Adjust height of textareas dynamically
     useEffect(() => {
