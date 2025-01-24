@@ -9,7 +9,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 100%;
     margin: 0;
     padding: 0;
 }
@@ -156,4 +156,17 @@ body {
 
 .secondary-button:active {
     background-color: #525252;
+}
+
+
+.menu-text {
+    font-weight: 300;
+    font-size: 14px;
+  color: #ffffff; /* Tailwind orange-300 */
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.menu-text:hover {
+  color: #f1b46a; /* Tailwind orange-400 */
 }

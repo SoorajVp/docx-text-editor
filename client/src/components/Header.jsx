@@ -1,229 +1,54 @@
-import React, { useContext, useState } from "react";
-import apiClient from "../api/axios";
-import { MainContext } from "../contexts/Provider";
-import { useNavigate } from "react-router-dom";
-import { IoIosRedo, IoIosUndo } from "react-icons/io";
-import { TbReload } from "react-icons/tb";
-import { FiDownload } from "react-icons/fi";
-import toast from "react-hot-toast";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { toggleDarkMode } from "../redux/slice/appSlice";
+import { useDispatch, useSelector } from "react-redux";
+
 
 const Header = () => {
-  const [saving, setSaving] = useState(false);
-  const { urlContext, idContext, textContext, setUrlContext, setIdContext } =
-    useContext(MainContext);
-  const navigate = useNavigate();
+  const { darkMode } = useSelector((store) => store.app)
+  const [isChecked, setIsChecked] = useState(false)
+  const dispatch = useDispatch();
 
-  // Save changes to the document
-  const handleSubmit = async () => {
-    const url = urlContext[idContext];
-    if (!url || textContext.length === 0) {
-      alert("Cannot submit: either the URL or text blocks are missing.");
-      return;
-    }
+  const changeThemeMode = () => {
+    dispatch(toggleDarkMode())
+  }
 
-    setSaving(true);
-    try {
-      const payload = {
-        documentUrl: url,
-        updatedTextBlocks: textContext,
-      };
-
-      const response = await apiClient.post("/update-document", payload);
-      const updatedUrl = response?.data?.updatedUrl;
-      if (!updatedUrl) {
-        throw new Error("Invalid response from the server");
-      }
-
-      // Update context immutably
-      setUrlContext((prevUrls) => [updatedUrl, ...prevUrls]);
-      setIdContext(0);
-      localStorage.setItem(
-        "url_value",
-        JSON.stringify([updatedUrl, ...urlContext]),
-      );
-    } catch (error) {
-      alert("Failed to save document. Please try again.");
-      console.error(error);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  // Handle discard
-  const onDiscard = () => {
-    setUrlContext([]);
-    setIdContext(0);
-    localStorage.removeItem("url_value");
-
-    location.href = "/";
-    // toast.success("Changes discarded", {
-    //   style: {
-    //     border: '1px solid #fca03d',
-    //     borderRadius: '0px',
-    //     padding: '8px',
-    //     color: '#fff',
-    //     backgroundColor: '#1a1a1a',
-    //     width: "13rem"
-    //   },
-    //   icon: "✔️"
-    // });
-  };
-
-  // Handle Undo
-  const handleUndo = () => {
-    toast.dismiss();
-    if (idContext < urlContext.length - 1) {
-      setIdContext((prevIndex) => Number(prevIndex) + 1);
-      navigate(`?id=${Number(idContext) + 1}`);
-      toast("Changes Reverted", {
-        style: {
-          border: "1px solid #fca03d",
-          borderRadius: "0px",
-          padding: "8px",
-          color: "#fff",
-          backgroundColor: "#1a1a1a",
-          width: "11rem",
-        },
-        icon: "➖",
-      });
-    }
-  };
-
-  // Handle Redo
-  const handleRedo = () => {
-    toast.dismiss();
-    if (idContext > 0) {
-      setIdContext((prevIndex) => prevIndex - 1);
-      navigate(`?id=${Number(idContext) - 1}`);
-      toast("Redo Changes", {
-        style: {
-          border: "1px solid #fca03d",
-          borderRadius: "0px",
-          padding: "8px",
-          color: "#fff",
-          backgroundColor: "#1a1a1a",
-          width: "11rem",
-        },
-        icon: "➕",
-      });
-    }
-  };
-
-  const handleDownload = async () => {
-    try {
-      // Show a loading toast while downloading
-      const loadingToastId = toast.loading("Document downloading...", {
-        style: {
-          border: "1px solid #fca03d",
-          borderRadius: "0px",
-          padding: "8px",
-          color: "#fff",
-          backgroundColor: "#1a1a1a",
-        },
-        iconTheme: {
-          primary: "#fcc481",
-          secondary: "#ff9417",
-        },
-      });
-
-      const url = urlContext[idContext];
-      const fileName = url.split("/").pop();
-
-      // Fetch the file
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch: ${response.statusText}`);
-      }
-
-      const blob = await response.blob();
-
-      // Create a download link
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = fileName;
-      link.click();
-
-      // Clean up
-      URL.revokeObjectURL(link.href);
-
-      // Update toast to success
-      toast.dismiss(loadingToastId); // Dismiss the loading toast
-      toast.success("Download completed successfully!", {
-        style: {
-          border: "1px solid #fca03d",
-          borderRadius: "0px",
-          padding: "8px",
-          color: "#fff",
-          backgroundColor: "#1a1a1a",
-        },
-        icon: "✔️",
-      });
-    } catch (err) {
-      // Remove loading toast and show error toast
-      toast.dismiss();
-      toast.error("Download failed. Please try again.", {
-        style: {
-          border: "1px solid #fca03d",
-          borderRadius: "0px",
-          padding: "8px",
-          color: "#fff",
-          backgroundColor: "#1a1a1a",
-        },
-        iconTheme: {
-          primary: "#ff1e1e",
-          secondary: "#FFFAEE",
-        },
-      });
-      console.error("Download failed:", err);
-    }
-  };
 
   return (
-    <header className="flex w-full items-center justify-between bg-black px-6 py-3 font-serif">
+    <header className="flex w-full items-center justify-between bg-neutral-300 dark:bg-black px-6 py-3 font-serif">
       <div className="flex items-center gap-2">
-        <h2 className="hidden truncate text-lg font-semibold text-gray-200 md:block">
-          Edit Document
-        </h2>
+        <Link to="/get-started" className="hidden truncate uppercase text-lg font-semibold text-neutral-700 dark:text-gray-200 md:block">
+          Documate
+        </Link>
       </div>
-      <div className="flex items-center space-x-2">
-        {idContext != urlContext.length - 1 && (
-          <button
-            className="border border-slate-400 bg-neutral-800 p-2 text-gray-200 transition duration-500 ease-in-out hover:border-orange-400 hover:bg-neutral-700"
-            onClick={handleUndo}
-          >
-            <IoIosUndo size={15} />
-          </button>
-        )}
-        {idContext != 0 && (
-          <button
-            className="border border-slate-400 bg-neutral-800 p-2 text-gray-200 transition duration-500 ease-in-out hover:border-orange-400 hover:bg-neutral-700"
-            onClick={handleRedo}
-          >
-            <IoIosRedo size={15} />
-          </button>
-        )}
-        <button
-          className="border border-slate-400 bg-neutral-800 p-2 text-gray-200 transition duration-500 ease-in-out hover:border-orange-400 hover:bg-neutral-700"
-          onClick={handleDownload}
-        >
-          <FiDownload size={15} />
-        </button>
-        <button
-          className="border border-slate-400 bg-neutral-800 p-2 text-gray-200 transition duration-500 ease-in-out hover:border-orange-400 hover:bg-neutral-700"
-          onClick={() => location.reload()}
-        >
-          <TbReload size={15} />
-        </button>
-        <button className="secondary-button" onClick={onDiscard}>
-          Discard
-        </button>
-        <button
-          className="primary-button"
-          disabled={saving}
-          onClick={handleSubmit}
-        >
-          {saving ? "Saving..." : "Save Changes"}
-        </button>
+      <div className="flex items-center justify-betwee  space-x-2 gap-5 dark:text-white text-neutral-800">
+        <Link to="/" className="hover:text-orange-700 dark:hover:text-orange-300 cursor-pointer transition-all ease-in-out duration-300" >Home</Link>
+        <Link to="/" className="hover:text-orange-700 dark:hover:text-orange-300 cursor-pointer transition-all ease-in-out duration-300" >Upload</Link>
+        <Link to="/edit" className="hover:text-orange-700 dark:hover:text-orange-300 cursor-pointer transition-all ease-in-out duration-300" >Edit</Link>
+        <label className="flex cursor-pointer select-none items-center">
+          <div className="hover:text-orange-700 dark:hover:text-orange-300 cursor-pointer transition-all ease-in-out duration-300 pr-1">Dark Mode</div>
+          <div className="relative">
+            <input
+              type="checkbox"
+              checked={darkMode}
+              onChange={changeThemeMode}
+              className="sr-only"
+            />
+            {/* Background changes color based on isChecked */}
+            <div className={`block h-6 w-10 rounded-full transition ${darkMode ? "bg-orange-500" : "bg-gray-400 border border-neutral-500"
+              }`}
+            ></div>
+            {/* Dot moves position based on isChecked */}
+            <div
+              className={`dot absolute top-1 h-4 w-4 rounded-full bg-white transition transform ${darkMode ? "translate-x-5" : "translate-x-1"
+                }`}
+            ></div>
+          </div>
+        </label>
+        <Link to="/profile" className="flex items-center gap-2">
+          <h3 className="hover:text-orange-700 dark:hover:text-orange-300 cursor-pointer transition-all ease-in-out duration-300">Profile</h3>
+          <img src="https://lh3.googleusercontent.com/a/ACg8ocLqDRA8vYEKX7dcfB8puGYeLzdlhW_9wtymXUsK5StYR_KbPQ=s96-c" alt="logo" width={30} height={30} className="rounded" />
+        </Link>
       </div>
     </header>
   );

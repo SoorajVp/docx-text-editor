@@ -1,13 +1,14 @@
 import React, { useContext, useState } from "react";
 import { MainContext } from "../contexts/Provider";
 import { LiaPasteSolid } from "react-icons/lia";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
   const data = localStorage.getItem("url_value") || "";
-  const [docUrl, setDocUrl] = useState(data);
+  const [docUrl, setDocUrl] = useState("");
   const [error, setError] = useState("");
   const { setUrlContext } = useContext(MainContext);
-
+  const navigate = useNavigate()
   const handleChange = (e) => {
     setDocUrl(e.target.value);
     setError("");
@@ -22,7 +23,7 @@ const HomePage = () => {
     }
     setUrlContext([docUrl]);
     localStorage.setItem("url_value", JSON.stringify([docUrl]));
-    window.location.reload();
+    navigate("/edit")
   };
 
   const handlePaste = async () => {

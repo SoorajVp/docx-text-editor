@@ -17,7 +17,7 @@ apiClient.interceptors.response.use(
         if (response.status === 201 ) {
             toast(response.data.message, {
                 style: {
-                    border: '1px solid #fca03d',
+                    border: '1px solid #5ca336',
                     borderRadius: '0px',
                     padding: '8px',
                     color: '#fff', 
@@ -32,9 +32,9 @@ apiClient.interceptors.response.use(
     (error) => {
         // Handle errors globally
         console.log('Axios response Error => ', error);
-        toast.error('Something went wrong', {
+        toast.error(error.response.data.message, {
             style: {
-                border: '1px solid #fca03d',
+                border: '1px solid #ff4040',
                 borderRadius: '0px',
                 padding: '8px',
                 color: '#fff',

@@ -1,9 +1,14 @@
 
 import { useContext, useEffect } from 'react'
 import { MainContext } from './contexts/Provider'
-import HomePage from './components/HomePage'
 import EditingPage from './components/EditingPage'
 import './App.css'
+import { Route, Routes } from 'react-router-dom'
+import LandingPage from './components/LandingPage'
+import Login from './components/Login'
+import HomePage from './components/HomePage'
+import Layout from './components/Layout'
+import Profile from './components/Profile'
 
 function App() {
   const urlItems = JSON.parse(localStorage.getItem("url_value"));
@@ -18,9 +23,20 @@ function App() {
     setUrlContext(urlItems || null)
   }, [urlId])
 
-  return urlItems?.length > 0 ?
-    <EditingPage /> :
-    <HomePage />
+  // return urlItems?.length > 0 ?
+  //   <EditingPage /> :
+  //   <HomePage />
+
+  return (
+    <Routes>
+      <Route path="/get-started" element={<LandingPage />} />
+      <Route path='/' element={<Layout />} >
+        <Route path="" element={<HomePage />} />
+        <Route path="/edit" element={<EditingPage />} />
+        <Route path="/profile" element={<Profile />} />
+      </Route>
+    </Routes>
+  );
 }
 
 export default App
