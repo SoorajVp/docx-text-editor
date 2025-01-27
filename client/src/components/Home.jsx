@@ -3,7 +3,7 @@ import { MainContext } from "../contexts/Provider";
 import { LiaPasteSolid } from "react-icons/lia";
 import { useNavigate } from "react-router-dom";
 
-const HomePage = () => {
+const Homw = () => {
   const data = localStorage.getItem("url_value") || "";
   const [docUrl, setDocUrl] = useState("");
   const [error, setError] = useState("");
@@ -60,4 +60,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default Homw;

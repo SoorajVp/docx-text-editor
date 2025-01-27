@@ -6,9 +6,10 @@ import './App.css'
 import { Route, Routes } from 'react-router-dom'
 import LandingPage from './components/LandingPage'
 import Login from './components/Login'
-import HomePage from './components/HomePage'
 import Layout from './components/Layout'
 import Profile from './components/Profile'
+import HomePage from './pages/HomePage'
+import UploadPage from './pages/UploadPage'
 
 function App() {
   const urlItems = JSON.parse(localStorage.getItem("url_value"));
@@ -33,6 +34,8 @@ function App() {
       <Route path='/' element={<Layout />} >
         <Route path="" element={<HomePage />} />
         <Route path="/edit" element={<EditingPage />} />
+        <Route path="/upload" element={<UploadPage />} />
+
         <Route path="/profile" element={<Profile />} />
       </Route>
     </Routes>

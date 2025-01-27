@@ -34,7 +34,7 @@ const LandingPage = () => {
         .then((res) => {
           console.log("useEffect => ", res)
           setProfile(res.data)
-          navigate("/")
+          // navigate("/")
         })
         .catch((err) => console.error("Error fetching user profile:", err));
     }

@@ -27,8 +27,10 @@ const userSchema = new mongoose.Schema(
         },
         picture: {
             type: String,
-            required: true,
+            enum: ['light', 'dark'], // Optional: Define theme
+            default: 'light',
         },
+        
     },
     {
         timestamps: true, // Automatically adds `createdAt` and `updatedAt` fields
