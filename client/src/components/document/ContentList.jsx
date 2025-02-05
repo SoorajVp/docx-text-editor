@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useRef, useCallback, useState } from "react";
-import apiClient from "../api/axios";
-import { MainContext } from "../contexts/Provider";
+import apiClient from "../../api/axios";
+import { MainContext } from "../../contexts/Provider";
 import { useNavigate } from "react-router-dom";
 import { IoIosRedo, IoIosUndo } from "react-icons/io";
 import { TbReload } from "react-icons/tb";
 import { FiDownload } from "react-icons/fi";
 import toast from "react-hot-toast";
-import ContentBlock from "./Textblock";
-import documentService from "../api/services/document";
+import ContentBlock from "../Textblock";
+import documentService from "../../api/services/document";
 
 
 const ContentList = ({ fetching }) => {

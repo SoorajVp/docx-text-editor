@@ -10,10 +10,26 @@ const apiClient = axios.create({
     timeout: 100000, // Set a timeout
 });
 
+// Request interceptor
+apiClient.interceptors.request.use(
+    (config) => {
+        // You can modify the request config here (e.g., add an authorization token)
+        const token = localStorage.getItem('auth_token'); // Example: Get token from localStorage
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        // Handle request error
+        console.error('Request Interceptor Error:', error);
+        return Promise.reject(error);
+    }
+);
+
 // Response Interceptor
 apiClient.interceptors.response.use(
     (response) => {
-        console.log("Axios response => ", response)
         if (response.status === 201 ) {
             toast(response.data.message, {
                 style: {
@@ -26,12 +42,16 @@ apiClient.interceptors.response.use(
                 icon: "✔️"
             });
         }
+        const token = localStorage.getItem('auth_token'); // Example: Get token from localStorage
         return response;
     },
     
     (error) => {
         // Handle errors globally
         console.log('Axios response Error => ', error);
+        if (error.status === 401) {
+            location.pathname = "/get-started"
+        }
         toast.error(error.response.data.message, {
             style: {
                 border: '1px solid #ff4040',

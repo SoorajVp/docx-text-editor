@@ -1,5 +1,6 @@
 import axios from "axios";
 import JSZip from "jszip";
+import cloudinary from "../config/cloudinary.js";
 
 const ConvertDocToXML = async (docxtUrl) => {
     // Fetch the document from the URL
@@ -12,9 +13,18 @@ const ConvertDocToXML = async (docxtUrl) => {
     return documentXml
 }
 
+const uploadImageToCloudinary = async (fileBuffer) => {
+    return new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+            { folder: "user_profiles" },
+            (error, result) => {
+                if (error) reject(error);
+                else resolve(result);
+            }
+        ).end(fileBuffer);
+    });
+};
 
-// Function to generate a 4-digit random number
-const generateRandomNumber = () => Math.floor(1000 + Math.random() * 9000);
 
 // Function to get the filename and add a random number
 const GenerateFileName = (url) => {
@@ -23,4 +33,4 @@ const GenerateFileName = (url) => {
 };
 
 
-export default { ConvertDocToXML, GenerateFileName }
+export default { ConvertDocToXML, GenerateFileName, uploadImageToCloudinary }

@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
-import ViewDocument from './ViewDocument'
 import { MainContext } from '../contexts/Provider';
-import ContentList from './ContentList';
+import ContentList from '../components/document/ContentList';
 import documentService from '../api/services/document';
+import ViewDocument from '../components/document/ViewDocument';
 
 const EditingPage = () => {
     const [fetching, setFetching] = useState(false)
@@ -21,7 +21,7 @@ const EditingPage = () => {
                 const data = await documentService.GetDocumentTextBlocks(url)
                 setTextContext(data.textBlocks || []);
                 console.log("Document loaded successfully!");
-            }  finally {
+            } finally {
                 setFetching(false);
             }
         };

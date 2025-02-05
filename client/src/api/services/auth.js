@@ -3,7 +3,7 @@ import apiClient from "../axios";
 
 
 const authService = {
-    GetGoogleUserDatils: async (access_token) => {
+    GoogleLogin: async (access_token) => {
         try {
             const response = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${access_token}`,
                 {
@@ -12,16 +12,13 @@ const authService = {
                         Accept: "application/json",
                     },
                 })
-                
-            return response.data
+            const dbResponse = await apiClient.post(`/auth/google-login`, response.data);
+            return dbResponse.data
         } catch (error) {
             throw error
         }
     },
-    GoogleLogin: async (payload) => {
-        const response = await apiClient.post(`/auth/google-login`, payload);
-        return response.data
-    }
+    
 }
 
 export default authService;

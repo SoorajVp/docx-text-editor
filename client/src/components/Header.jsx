@@ -6,9 +6,11 @@ import { useDispatch, useSelector } from "react-redux";
 
 const Header = () => {
   const { darkMode } = useSelector((store) => store.app)
+  const { user_data } = useSelector((store) => store.user)
+
   const [isChecked, setIsChecked] = useState(false)
   const dispatch = useDispatch();
-
+  
   const changeThemeMode = () => {
     dispatch(toggleDarkMode())
   }
@@ -47,7 +49,7 @@ const Header = () => {
         </label>
         <Link to="/profile" className="flex items-center gap-2">
           <h3 className="hover:text-orange-700 dark:hover:text-orange-300 cursor-pointer transition-all ease-in-out duration-300">Profile</h3>
-          <img src="https://lh3.googleusercontent.com/a/ACg8ocLqDRA8vYEKX7dcfB8puGYeLzdlhW_9wtymXUsK5StYR_KbPQ=s96-c" alt="logo" width={30} height={30} className="rounded" />
+          <img src={user_data?.picture || "https://ionicframework.com/docs/img/demos/avatar.svg"} alt="logo" width={30} height={30} className="rounded-full" />
         </Link>
       </div>
     </header>

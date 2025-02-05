@@ -1,5 +1,6 @@
 import React from 'react'
 import DocViewer, { DocViewerRenderers } from 'react-doc-viewer';
+import "./Document.css"
 
 const ViewDocument = ({ url }) => {
     const customTheme = {

@@ -1,15 +1,16 @@
 
 import { useContext, useEffect } from 'react'
 import { MainContext } from './contexts/Provider'
-import EditingPage from './components/EditingPage'
+import EditingPage from './pages/EditingPage'
 import './App.css'
 import { Route, Routes } from 'react-router-dom'
 import LandingPage from './components/LandingPage'
-import Login from './components/Login'
 import Layout from './components/Layout'
 import Profile from './components/Profile'
 import HomePage from './pages/HomePage'
 import UploadPage from './pages/UploadPage'
+import ProfilePage from './pages/ProfilePage'
+import Loading from './components/Loading'
 
 function App() {
   const urlItems = JSON.parse(localStorage.getItem("url_value"));
@@ -36,7 +37,9 @@ function App() {
         <Route path="/edit" element={<EditingPage />} />
         <Route path="/upload" element={<UploadPage />} />
 
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/Loading" element={<Loading />} />
+
       </Route>
     </Routes>
   );
