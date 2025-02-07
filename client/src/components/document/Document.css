@@ -1,3 +1,12 @@
 #header-bar {
   display: none !important;
 }
+
+.no-scrollbar {
+  overflow: auto; /* Allow scrolling */
+  scrollbar-width: none; /* Hide scrollbar (Firefox) */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Hide scrollbar (Chrome, Safari) */
+}

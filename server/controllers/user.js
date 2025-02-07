@@ -22,7 +22,9 @@ const UpdateUser = async (req, res, next) => {
         }
 
         if (req.file) {
-            const result = await helper.uploadImageToCloudinary(req.file.buffer)
+            console.log("this is file buffer ", req.file)
+            const { buffer, originalname, mimetype } = req.file
+            const result = await helper.cloudinaryUpload(buffer, originalname, "pictures")
             user_details.picture = result.secure_url
         }
         let user = await User.findByIdAndUpdate(_id, user_details, {new: true})

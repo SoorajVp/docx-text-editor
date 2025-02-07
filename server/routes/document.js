@@ -1,11 +1,17 @@
 import express from "express";
 import controller from "../controllers/document.js"
+import { verifyUser } from "../middlewares/auth.js";
+import upload from "../middlewares/multer.js";
 
 const router = express.Router();
 
-router.get('/get-text-blocks', controller.GetDocumentTexts)
+router.post('/create', verifyUser, upload.single("document"), controller.CreateDocument)
 
-router.post('/update-document', controller.UpdateDocument)
+router.get('/list', verifyUser, controller.GetDocumentList)
+
+router.get('/text-blocks', verifyUser, controller.GetDocumentTexts)
+
+router.post('/update', verifyUser, controller.UpdateDocument)
 
 
 export default router;

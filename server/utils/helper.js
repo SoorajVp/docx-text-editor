@@ -1,5 +1,6 @@
 import axios from "axios";
 import JSZip from "jszip";
+import path from "path";
 import cloudinary from "../config/cloudinary.js";
 
 const ConvertDocToXML = async (docxtUrl) => {
@@ -13,10 +14,15 @@ const ConvertDocToXML = async (docxtUrl) => {
     return documentXml
 }
 
-const uploadImageToCloudinary = async (fileBuffer) => {
+const cloudinaryUpload = async (fileBuffer, fileName, folder) => {
+    console.log("file mime type => ", fileName )
+
+    if (fileName.toLowerCase().endsWith(".pdf")) {
+        fileName = path.basename(fileName, path.extname(fileName));
+    }
     return new Promise((resolve, reject) => {
         cloudinary.uploader.upload_stream(
-            { folder: "user_profiles" },
+            { resource_type: "auto", folder, public_id: fileName },
             (error, result) => {
                 if (error) reject(error);
                 else resolve(result);
@@ -33,4 +39,4 @@ const GenerateFileName = (url) => {
 };
 
 
-export default { ConvertDocToXML, GenerateFileName, uploadImageToCloudinary }
+export default { ConvertDocToXML, GenerateFileName, cloudinaryUpload }

@@ -130,8 +130,20 @@ const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
                                 </tr>
                                 <tr>
                                     <td className="pr-5 py-1">Email ID</td>
-                                    <td className="py-1 min-w-64">
+                                    {/* <td className="py-1 min-w-64">
                                         <p className="py-1"> : {user.email}</p>
+                                    </td> */}
+                                    <td className="py-1 min-w-64">
+                                        {isEditing ? (
+                                            <input
+                                                type="text"
+                                                name="email"
+                                                value={user.email} disabled
+                                                className="block w-full text-sm bg-white dark:bg-black text-black dark:text-neutral-200 border border-gray-400 dark:border-gray-700 focus:border-orange-500 dark:focus:border-orange-300 outline-none transition duration-500 ease-in-out px-2 py-1.5"
+                                            />
+                                        ) : (
+                                            <p className="py-1"> : {user.email}</p>
+                                        )}
                                     </td>
                                 </tr>
                                 <tr>
@@ -180,13 +192,13 @@ const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
                             id="fileInput"
                             onChange={handleInputChange}
                         />
-                        {isEditing ? 
-                        <button className="w-full border border-neutral-500 mt-2 dark:text-white text-sm py-0.5" onClick={() => document.getElementById("fileInput").click()}>
-                            Change Picture
-                        </button> :
-                        <button onClick={handleLogOut} className="flex items-center gap-2 justify-center w-full border border-red-500 mt-2 text-red-700 dark:text-red-500 bg-neutral-100 dark:bg-neutral-900 py-1 font-semibold text-base">
-                            Logout <IoLogOutOutline size={20} />
-                        </button>
+                        {isEditing ?
+                            <button className="w-full border border-neutral-500 mt-2 dark:text-white text-sm py-0.5" onClick={() => document.getElementById("fileInput").click()}>
+                                Change Picture
+                            </button> :
+                            <button onClick={handleLogOut} className="flex items-center gap-2 justify-center w-full border border-red-500 mt-2 text-red-700 dark:text-red-500 bg-neutral-100 dark:bg-neutral-900 py-1 font-semibold text-base">
+                                Logout <IoLogOutOutline size={20} />
+                            </button>
                         }
                     </div>
                 </div>

@@ -1,8 +1,14 @@
 import React, { useState } from "react";
+import documentService from "../../api/services/document";
+import { useNavigate } from "react-router-dom";
+import { setPageLoading } from "../../redux/slice/userSlice";
+import { useDispatch } from "react-redux";
 
 const DocumentUpload = () => {
     const [file, setFile] = useState(null);
     const [error, setError] = useState("");
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const validFileTypes = [
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // docx
@@ -40,6 +46,14 @@ const DocumentUpload = () => {
         setError("");
     };
 
+    const handleFileSubmit = async() => {
+        dispatch(setPageLoading())
+        const formData = new FormData();
+        formData.append("document", file);
+        await documentService.UploadDocument(formData)
+        dispatch(setPageLoading())
+        navigate("/")
+    }
     return (
         <div className="h-full w-full flex items-center justify-center">
             <div className="w-full max-w-3xl mx-4 p-6 bg-white dark:bg-neutral-950 border border-gray-300 dark:border-gray-800 shadow-lg">
@@ -91,7 +105,7 @@ const DocumentUpload = () => {
                                 </button>
                             </li>
                         </ul>
-                        <button
+                        <button onClick={handleFileSubmit}
                             className="w-full mt-3 py-1 bg-orange-500 hover:bg-orange-600 text-white shadow-md transition duration-300"
                         >
                             Submit Document

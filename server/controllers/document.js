@@ -3,6 +3,51 @@ import cloudinary from "../config/cloudinary.js";
 import JSZip from "jszip";
 import axios from "axios";
 import helper from "../utils/helper.js";
+import Document from "../models/document.js";
+
+const CreateDocument = async (req, res, next) => {
+    try {
+        const _id = req.userId
+        const { buffer, originalname, size, mimetype } = req.file
+        // Convert file buffer to Cloudinary stream upload
+        const result = await helper.cloudinaryUpload(buffer, originalname, "documents")
+
+        const documentDetails = {
+            user_id: _id,
+            file_name: originalname,
+            mime_type: mimetype,
+            size: size,
+            url: result?.secure_url
+        }
+        let document = await Document.create(documentDetails)
+        res.status(201).json({ message: `Document Created Successfully`, document })
+    } catch (error) {
+        console.log("heyyy")
+        next(error)
+    }
+}
+
+const GetDocumentList = async (req, res, next) => {
+    try {
+        const _id = req.userId
+        const {search } = req.query
+
+        let filter = { user_id: _id };
+
+        if (search) {
+            filter.$or = [
+                { file_name: { $regex: search, $options: "i" } }, // Search by file name (case-insensitive)
+                { mime_type: { $regex: search, $options: "i" } }, // Search by mime type (case-insensitive)
+            ];
+        }
+
+        // Fetch filtered documents
+        let documents = await Document.find(filter).sort({updatedAt: -1})
+        res.status(200).json({ message: `Document list fetched`, documents })
+    } catch (error) {
+        next(error)
+    }
+}
 
 const GetDocumentTexts = async (req, res, next) => {
 
@@ -51,10 +96,10 @@ const GetDocumentTexts = async (req, res, next) => {
 
 
 const UpdateDocument = async (req, res, next) => {
-    
+
     try {
         const { documentUrl, updatedTextBlocks } = req.body;
-        
+
         const fileName = helper.GenerateFileName(documentUrl);
 
         // Fetch the document
@@ -128,10 +173,9 @@ const UpdateDocument = async (req, res, next) => {
             updatedAt: new Date().toISOString(),
         });
     } catch (error) {
-        console.error("Error while updating the document:", error);
         next(error)
     }
 };
 
 
-export default { GetDocumentTexts, UpdateDocument }
+export default { GetDocumentTexts, UpdateDocument, CreateDocument, GetDocumentList }
