@@ -26,6 +26,8 @@ const Header = () => {
         <Link to="/" className="hover:text-orange-700 dark:hover:text-orange-300 cursor-pointer transition-all ease-in-out duration-300" >Home</Link>
         <Link to="/upload" className="hover:text-orange-700 dark:hover:text-orange-300 cursor-pointer transition-all ease-in-out duration-300" >Upload</Link>
         <Link to="/edit" className="hover:text-orange-700 dark:hover:text-orange-300 cursor-pointer transition-all ease-in-out duration-300" >Edit</Link>
+        <Link to="/bin" className="hover:text-orange-700 dark:hover:text-orange-300 cursor-pointer transition-all ease-in-out duration-300" >Bin</Link>
+
         <label className="flex cursor-pointer select-none items-center">
           <div className="hover:text-orange-700 dark:hover:text-orange-300 cursor-pointer transition-all ease-in-out duration-300 pr-1">Dark Mode</div>
           <div className="relative">

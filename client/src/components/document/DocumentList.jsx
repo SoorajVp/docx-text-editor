@@ -1,6 +1,7 @@
 import React from 'react'
-import { getFileIcon, getFileSizeInMB } from '../../utils/helper'
-import { IoIosDocument } from 'react-icons/io'
+import { formatDate, getFileIcon, getFileSizeInMB } from '../../utils/helper'
+import { IoIosDocument, IoMdMore } from 'react-icons/io'
+import { Link } from 'react-router-dom'
 
 const DocumentList = ({ documents, listType, loading }) => {
     return (
@@ -17,7 +18,7 @@ const DocumentList = ({ documents, listType, loading }) => {
                                 ))
                                 :
                                 documents?.map((item) => (
-                                    <li
+                                    <Link to={`/doc/view/${item?._id}`}
                                         key={item?._id}
                                         className="flex justify-between items-center border border-neutral-300 hover:border-orange-400 dark:hover:border-orange-600 dark:border-neutral-700 bg-neutral-100 dark:bg-black px-4 py-2 shadow-md transition duration-500 ease-in-out"
                                     >
@@ -29,10 +30,10 @@ const DocumentList = ({ documents, listType, loading }) => {
                                             </div>
 
                                         </div>
-                                        <button className="text-red-500 hover:text-red-700 transition duration-300">
-                                            Remove
+                                        <button className="text-neutral-900 dark:text-neutral-100  hover:text-neutral-600 dark:hover:text-neutral-400 transition duration-300">
+                                            <IoMdMore size={30} />
                                         </button>
-                                    </li>
+                                    </Link>
                                 ))}
                     </ul>
 
@@ -48,19 +49,18 @@ const DocumentList = ({ documents, listType, loading }) => {
                                 documents?.map((item) => (
                                     <li
                                         key={item?._id}
-                                        className="text-center border border-neutral-300 hover:border-orange-400 dark:hover:border-orange-600 dark:border-neutral-700 bg-neutral-100 dark:bg-black px-4 py-2 shadow-md transition duration-500 ease-in-out"
+                                        className="text-center border border-neutral-300 hover:border-orange-400 dark:hover:border-orange-600 dark:border-neutral-700 bg-neutral-100 dark:bg-black p-5 shadow-md transition duration-500 ease-in-out"
                                     >
                                         <IoIosDocument size={60} className='text-gray-500 mx-auto -mb-2' />
                                         {/* <img src={getFileIcon(item?.mime_type)} alt="LOGO" className="w-8 h-8 object-cover object-center" /> */}
-                                        <span className="text-neutral-500 text-xs ">{getFileSizeInMB(item?.size)}</span>
+                                        <span className="text-neutral-500 text-xs">{getFileSizeInMB(item?.size)}</span>
                                         <p className="text-gray-900 dark:text-gray-100 -mb-1">{item?.file_name}</p>
+                                        <p className="text-neutral-500 text-sm mt-1">{formatDate(item?.updatedAt)}</p>
 
                                     </li>
                                 ))}
                     </ul>
             }
-
-
 
         </div >
     )

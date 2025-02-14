@@ -11,6 +11,8 @@ import HomePage from './pages/HomePage'
 import UploadPage from './pages/UploadPage'
 import ProfilePage from './pages/ProfilePage'
 import Loading from './components/Loading'
+import BinFilesPage from './pages/BinFilesPage'
+import DetailsPage from './pages/DetailsPage'
 
 function App() {
   const urlItems = JSON.parse(localStorage.getItem("url_value"));
@@ -36,8 +38,10 @@ function App() {
         <Route path="" element={<HomePage />} />
         <Route path="/edit" element={<EditingPage />} />
         <Route path="/upload" element={<UploadPage />} />
-
+        <Route path="/doc/view/:docId" element={<DetailsPage />} />
+        <Route path="/bin" element={<BinFilesPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+
         <Route path="/Loading" element={<Loading />} />
 
       </Route>

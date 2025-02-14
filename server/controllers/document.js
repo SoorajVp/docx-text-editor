@@ -4,6 +4,7 @@ import JSZip from "jszip";
 import axios from "axios";
 import helper from "../utils/helper.js";
 import Document from "../models/document.js";
+import AppError from "../utils/appError.js";
 
 const CreateDocument = async (req, res, next) => {
     try {
@@ -17,12 +18,28 @@ const CreateDocument = async (req, res, next) => {
             file_name: originalname,
             mime_type: mimetype,
             size: size,
+            updated_urls: [result?.secure_url],
             url: result?.secure_url
         }
         let document = await Document.create(documentDetails)
         res.status(201).json({ message: `Document Created Successfully`, document })
     } catch (error) {
-        console.log("heyyy")
+        next(error)
+    }
+}
+
+const GetDocumentById = async (req, res, next) => {
+    try {
+        const { id } = req.query
+
+        const document = await Document.findById(id);
+
+        if (!document) {
+            throw new AppError('Document not found', 404);
+        }
+
+        res.status(200).json({ message: 'Document fetched successfully', document });
+    } catch (error) {
         next(error)
     }
 }
@@ -30,7 +47,7 @@ const CreateDocument = async (req, res, next) => {
 const GetDocumentList = async (req, res, next) => {
     try {
         const _id = req.userId
-        const {search } = req.query
+        const { search } = req.query
 
         let filter = { user_id: _id };
 
@@ -42,7 +59,7 @@ const GetDocumentList = async (req, res, next) => {
         }
 
         // Fetch filtered documents
-        let documents = await Document.find(filter).sort({updatedAt: -1})
+        let documents = await Document.find(filter).sort({ updatedAt: -1 })
         res.status(200).json({ message: `Document list fetched`, documents })
     } catch (error) {
         next(error)
@@ -178,4 +195,53 @@ const UpdateDocument = async (req, res, next) => {
 };
 
 
-export default { GetDocumentTexts, UpdateDocument, CreateDocument, GetDocumentList }
+const SoftDeleteDocument = async (req, res, next) => {
+    const { id } = req.query;
+    try {
+        const document = await Document.findByIdAndUpdate(
+            id,
+            { deletedAt: new Date() },
+            { new: true }
+        );
+
+        if (!document) {
+            throw new AppError('Document not found', 404);
+        }
+
+        res.status(200).json({ message: 'Document moved bin', document });
+    } catch (error) {
+        next(error)
+    }
+};
+
+const GetDeletedDocumentList = async (req, res, next) => {
+    try {
+        const _id = req.userId
+
+        let filter = { user_id: _id, deletedAt: { $ne: null } };
+
+        // Fetch filtered documents
+        let documents = await Document.find(filter).sort({ updatedAt: -1 })
+        res.status(200).json({ message: `Document list fetched`, documents })
+    } catch (error) {
+        next(error)
+    }
+}
+
+const DeleteDocument = async (req, res, next) => {
+    const { id } = req.query;
+    try {
+        const document = await Document.findByIdAndDelete(id);
+
+        if (!document) {
+            throw new AppError('Document not found', 404);
+        }
+
+        res.status(200).json({ message: 'Document deleted successfully', document });
+    } catch (error) {
+        next(error)
+    }
+};
+
+
+export default { GetDocumentById, GetDocumentTexts, UpdateDocument, CreateDocument, GetDocumentList, SoftDeleteDocument, GetDeletedDocumentList, DeleteDocument }

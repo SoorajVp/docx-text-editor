@@ -17,38 +17,25 @@ export const getFileSizeInMB = (bytes) => {
     return (bytes / (1024 * 1024)).toFixed(2) + "MB" // Convert to MB and keep 2 decimal places
 };
 
-const formatDate = (isoDate) => {
-    const date = new Date(isoDate);
+
+export const formatDate = (isoTime) => {
+    const date = new Date(isoTime);
+    const options = { timeZone: 'Asia/Kolkata', hour: 'numeric', minute: 'numeric', hour12: true };
+    const indianTime = date.toLocaleString('en-IN', options);
+
     const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
 
-    // Extract parts
-    const isToday = date.toDateString() === now.toDateString();
-    const yesterday = new Date();
-    yesterday.setDate(now.getDate() - 1);
-    const isYesterday = date.toDateString() === yesterday.toDateString();
+    const inputDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
-    // Format time (e.g., "4:59 AM")
-    const timeString = date.toLocaleString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-    });
+    if (inputDate.getTime() === today.getTime()) {
+        return `Today ${indianTime}`;
+    } else if (inputDate.getTime() === yesterday.getTime()) {
+        return `Yesterday ${indianTime}`;
+    } else {
+        const dateOptions = { year: 'numeric', month: 'short', day: 'numeric' };
+        return date.toLocaleDateString('en-IN', dateOptions);
+    }
+}
 
-    if (isToday) return `Today, ${timeString}`;
-    if (isYesterday) return `Yesterday, ${timeString}`;
-
-    // Format full date (e.g., "Feb 7, 2025, 4:59 AM")
-    return date.toLocaleString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-    });
-};
-
-// Example Usage
-console.log(formatDate("2025-02-07T04:59:37.114Z"));
-console.log(formatDate(new Date().toISOString())); // Today
-console.log(formatDate(new Date(Date.now() - 86400000).toISOString())); // Yesterday

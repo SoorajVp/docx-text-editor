@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import documentService from '../api/services/document'
 import DocumentList from '../components/document/DocumentList'
-import { MdOutlineTableRows } from 'react-icons/md'
-import { RiTable2 } from 'react-icons/ri'
+import { MdOutlineTableRows, MdViewList } from 'react-icons/md'
+import { PiGridNineFill } from "react-icons/pi";
 import { CiSearch } from "react-icons/ci";
 import { useNavigate } from 'react-router-dom'
 
@@ -43,8 +43,8 @@ const HomePage = () => {
           <div className="flex gap-1 items-center text-gray-500">
             {
               listType === "row" ?
-                <RiTable2 size={25} onClick={() => setListType("col")} className="text-gray-700 dark:text-gray-300" />
-                : <MdOutlineTableRows size={25} onClick={() => setListType("row")} className="text-gray-700 dark:text-gray-300" />
+                <PiGridNineFill size={25} onClick={() => setListType("col")} className="cursor-pointer text-gray-700 dark:text-gray-300 " />
+                : <MdViewList size={25} onClick={() => setListType("row")} className="cursor-pointer text-gray-700 dark:text-gray-300" />
             }
 
             <button onClick={() => navigate("/upload")} className="px-4 py-1 border-2 font-medium border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white transition duration-300 ease-in-out">

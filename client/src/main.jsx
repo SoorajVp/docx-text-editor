@@ -16,7 +16,7 @@ createRoot(document.getElementById("root")).render(
           position="bottom-right"
           containerStyle={{
             fontFamily: "serif",
-            fontSize: "14px",
+            fontSize: "16px",
           }}
           reverseOrder={false}
         />

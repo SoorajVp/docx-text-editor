@@ -4,35 +4,40 @@ import mongoose from 'mongoose';
 const documentSchema = new mongoose.Schema(
     {
         user_id: {
-            type: String,
+            type: mongoose.SchemaTypes.ObjectId,
             required: true,
-            trim: true, // Removes whitespace from both ends of the string
+            trim: true,
         },
         file_name: {
             type: String,
             required: true,
-            trim: true, // Removes whitespace from both ends of the string
+            trim: true,
         },
         mime_type: {
             type: String,
             required: true,
-            trim: true, // Removes whitespace from both ends of the string
         },
         size: {
             type: Number,
             required: true
         },
+        updated_urls: {
+            type: [String],
+        },
         url: {
             type: String,
             required: true,
+        },
+        deletedAt: {
+            type: Date,
+            default: null
         }
     },
     {
-        timestamps: true, // Automatically adds `createdAt` and `updatedAt` fields
+        timestamps: true,
     }
 );
 
-// Create and export the model
 const Document = mongoose.model('Document', documentSchema);
 
 export default Document;

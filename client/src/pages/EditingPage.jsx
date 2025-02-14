@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { MainContext } from '../contexts/Provider';
 import ContentList from '../components/document/ContentList';
 import documentService from '../api/services/document';
-import ViewDocument from '../components/document/ViewDocument';
+import ViewDocument from '../components/document/DocViewer';
 
 const EditingPage = () => {
     const [fetching, setFetching] = useState(false)

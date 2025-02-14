@@ -11,6 +11,10 @@ const documentService = {
         const response = await apiClient.get(`/document/list?search=${value}`);
         return response.data
     },
+    GetBinDocuments: async () => {
+        const response = await apiClient.get(`/document/bin-files`);
+        return response.data
+    },
     GetDocumentTextBlocks: async (url) => {
         const response = await apiClient.get(`/document/text-blocks?documentUrl=${url}`);
         return response.data

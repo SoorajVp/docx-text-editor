@@ -42,7 +42,6 @@ apiClient.interceptors.response.use(
                 icon: "✔️"
             });
         }
-        const token = localStorage.getItem('auth_token'); // Example: Get token from localStorage
         return response;
     },
     
@@ -50,6 +49,7 @@ apiClient.interceptors.response.use(
         // Handle errors globally
         console.log('Axios response Error => ', error);
         if (error.status === 401) {
+            localStorage.removeItem('auth_token')
             location.pathname = "/get-started"
         }
         toast.error(error.response.data.message, {

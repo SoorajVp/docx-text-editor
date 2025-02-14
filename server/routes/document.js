@@ -7,11 +7,19 @@ const router = express.Router();
 
 router.post('/create', verifyUser, upload.single("document"), controller.CreateDocument)
 
+router.get('/view', verifyUser, controller.GetDocumentById)
+
 router.get('/list', verifyUser, controller.GetDocumentList)
 
 router.get('/text-blocks', verifyUser, controller.GetDocumentTexts)
 
 router.post('/update', verifyUser, controller.UpdateDocument)
+
+router.post('/move-bin', verifyUser, controller.SoftDeleteDocument)
+
+router.get('/bin-files', verifyUser, controller.GetDeletedDocumentList)
+
+router.delete('/delete', verifyUser, controller.DeleteDocument)
 
 
 export default router;
