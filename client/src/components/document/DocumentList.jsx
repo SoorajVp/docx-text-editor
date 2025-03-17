@@ -1,5 +1,5 @@
 import React from 'react'
-import { formatDate, getFileIcon, getFileSizeInMB } from '../../utils/helper'
+import { formatDate, getFileSizeInMB } from '../../utils/helper'
 import { IoIosDocument, IoMdMore } from 'react-icons/io'
 import { Link } from 'react-router-dom'
 

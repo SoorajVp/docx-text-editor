@@ -38,7 +38,7 @@ function App() {
         <Route path="" element={<HomePage />} />
         <Route path="/edit" element={<EditingPage />} />
         <Route path="/upload" element={<UploadPage />} />
-        <Route path="/doc/view/:docId" element={<DetailsPage />} />
+        <Route path="/doc/view/:id" element={<DetailsPage />} />
         <Route path="/bin" element={<BinFilesPage />} />
         <Route path="/profile" element={<ProfilePage />} />
 

@@ -11,6 +11,12 @@ const documentService = {
         const response = await apiClient.get(`/document/list?search=${value}`);
         return response.data
     },
+
+    GetDocumentById: async (docId) => {
+        const response = await apiClient.get(`/document/view?id=${docId}`);
+        return response.data
+    },
+
     GetBinDocuments: async () => {
         const response = await apiClient.get(`/document/bin-files`);
         return response.data

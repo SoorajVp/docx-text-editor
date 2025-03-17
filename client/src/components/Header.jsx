@@ -24,7 +24,6 @@ const Header = () => {
       </div>
       <div className="flex items-center justify-betwee  space-x-2 gap-5 dark:text-white text-neutral-800">
         <Link to="/" className="hover:text-orange-700 dark:hover:text-orange-300 cursor-pointer transition-all ease-in-out duration-300" >Home</Link>
-        <Link to="/upload" className="hover:text-orange-700 dark:hover:text-orange-300 cursor-pointer transition-all ease-in-out duration-300" >Upload</Link>
         <Link to="/edit" className="hover:text-orange-700 dark:hover:text-orange-300 cursor-pointer transition-all ease-in-out duration-300" >Edit</Link>
         <Link to="/bin" className="hover:text-orange-700 dark:hover:text-orange-300 cursor-pointer transition-all ease-in-out duration-300" >Bin</Link>
 

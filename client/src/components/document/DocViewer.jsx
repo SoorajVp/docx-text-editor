@@ -1,17 +1,17 @@
 import React from 'react'
-import DocViewer, { DocViewerRenderers } from 'react-doc-viewer';
+import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
+import "@cyntler/react-doc-viewer/dist/index.css";
 import "./Document.css"
 
-const ViewDocument = ({ url }) => {
-    const customTheme = {
-        primary: "#242424", // Primary color (e.g., buttons or highlights)
-        secondary: "#242424", // Secondary color (e.g., backgrounds)
-        tertiary: "#ffff", // Tertiary color (e.g., text)
-        textPrimary: "#ffffff", // Primary text color
-    };
+const DocumentViewer = ({ url, mime_type }) => {
     return (
-        <DocViewer documents={[{ uri: url, fileType: "docx" }]} pluginRenderers={DocViewerRenderers} theme={customTheme} className="custom-doc-viewer" />
+
+        <DocViewer
+            documents={[{ uri: url }]} style={{ height: '100%' }}
+            pluginRenderers={DocViewerRenderers}
+            className="h-max w-full max-w-screen-md overflow-auto border border-orange-600"
+        />
     )
 }
 
-export default ViewDocument
+export default DocumentViewer

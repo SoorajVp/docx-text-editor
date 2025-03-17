@@ -3,9 +3,9 @@ import JSZip from "jszip";
 import path from "path";
 import cloudinary from "../config/cloudinary.js";
 
-const ConvertDocToXML = async (docxtUrl) => {
+const ConvertDocToXML = async (docUrl) => {
     // Fetch the document from the URL
-    const response = await axios.get(docxtUrl, { responseType: "arraybuffer" });
+    const response = await axios.get(docUrl, { responseType: "arraybuffer" });
     const originalDoc = Buffer.from(response.data);
 
     // Load the DOCX as a ZIP archive

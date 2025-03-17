@@ -10,3 +10,8 @@
 .no-scrollbar::-webkit-scrollbar {
   display: none; /* Hide scrollbar (Chrome, Safari) */
 }
+
+.custom-doc-viewer {
+    min-height: 80vh;
+    overflow: auto;
+}

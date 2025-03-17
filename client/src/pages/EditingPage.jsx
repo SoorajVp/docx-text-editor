@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { MainContext } from '../contexts/Provider';
 import ContentList from '../components/document/ContentList';
 import documentService from '../api/services/document';
-import ViewDocument from '../components/document/DocViewer';
+import DocumentViewer from '../components/document/DocViewer';
 
 const EditingPage = () => {
     const [fetching, setFetching] = useState(false)
@@ -31,7 +31,7 @@ const EditingPage = () => {
 
     return (
         <div className='grid lg:grid-cols-2 gap-2 h-full p-1'>
-            <ViewDocument url={urlContext[idContext]} />
+            <DocumentViewer url={urlContext[idContext]} />
             <ContentList fetching={fetching} />
         </div>
     )
