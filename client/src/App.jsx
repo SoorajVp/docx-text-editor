@@ -5,7 +5,7 @@ import EditingPage from './pages/EditingPage'
 import './App.css'
 import { Route, Routes } from 'react-router-dom'
 import LandingPage from './components/LandingPage'
-import Layout from './components/Layout'
+import Layout from './components/layout/Layout'
 import Profile from './components/Profile'
 import HomePage from './pages/HomePage'
 import UploadPage from './pages/UploadPage'
@@ -13,6 +13,7 @@ import ProfilePage from './pages/ProfilePage'
 import Loading from './components/Loading'
 import BinFilesPage from './pages/BinFilesPage'
 import DetailsPage from './pages/DetailsPage'
+import DocumentViewer from './components/document/DocViewer'
 
 function App() {
   const urlItems = JSON.parse(localStorage.getItem("url_value"));
@@ -33,7 +34,9 @@ function App() {
 
   return (
     <Routes>
+      <Route path="/test" element={<DocumentViewer />} />
       <Route path="/get-started" element={<LandingPage />} />
+
       <Route path='/' element={<Layout />} >
         <Route path="" element={<HomePage />} />
         <Route path="/edit" element={<EditingPage />} />

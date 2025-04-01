@@ -30,11 +30,11 @@ apiClient.interceptors.request.use(
 // Response Interceptor
 apiClient.interceptors.response.use(
     (response) => {
-        if (response.status === 201 ) {
+        if (response.data.toast ) {
             toast(response.data.message, {
                 style: {
                     border: '1px solid #5ca336',
-                    borderRadius: '0px',
+                    borderRadius: '5px',
                     padding: '8px',
                     color: '#fff', 
                     backgroundColor: '#1a1a1a',

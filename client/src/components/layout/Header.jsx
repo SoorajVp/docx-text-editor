@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { toggleDarkMode } from "../redux/slice/appSlice";
+import { toggleDarkMode } from "../../redux/slice/appSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 
@@ -9,14 +9,14 @@ const Header = () => {
   const { user_data } = useSelector((store) => store.user)
 
   const dispatch = useDispatch();
-  
+
   const changeThemeMode = () => {
     dispatch(toggleDarkMode())
   }
 
 
   return (
-    <header className="flex w-full items-center justify-between bg-neutral-300 dark:bg-black px-6 py-3 font-serif">
+    <header className="flex w-full items-center justify-between bg-neutral-300 dark:bg-black px-6 py-3 font-serif border-b border-gray-400 dark:border-gray-600">
       <div className="flex items-center gap-2">
         <Link to="/get-started" className="hidden truncate uppercase text-lg font-semibold text-neutral-700 dark:text-gray-200 md:block">
           Documate

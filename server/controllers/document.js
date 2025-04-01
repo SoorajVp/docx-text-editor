@@ -22,7 +22,7 @@ const CreateDocument = async (req, res, next) => {
             url: result?.secure_url
         }
         let document = await Document.create(documentDetails)
-        res.status(201).json({ message: `Document Created Successfully`, document })
+        res.status(201).json({ message: `Document Created Successfully`, document, toast: true })
     } catch (error) {
         next(error)
     }
@@ -38,7 +38,7 @@ const GetDocumentById = async (req, res, next) => {
             throw new AppError('Document not found', 404);
         }
 
-        res.status(200).json({ message: 'Document fetched successfully', document });
+        res.status(200).json({ message: 'Document fetched successfully', document, toast: true });
     } catch (error) {
         next(error)
     }
@@ -49,12 +49,15 @@ const GetDocumentList = async (req, res, next) => {
         const _id = req.userId
         const { search } = req.query
 
-        let filter = { user_id: _id };
+        let filter = {
+            user_id: _id,
+            deletedAt: null 
+        };
 
         if (search) {
             filter.$or = [
-                { file_name: { $regex: search, $options: "i" } }, // Search by file name (case-insensitive)
-                { mime_type: { $regex: search, $options: "i" } }, // Search by mime type (case-insensitive)
+                { file_name: { $regex: search, $options: "i" } },
+                { mime_type: { $regex: search, $options: "i" } }, 
             ];
         }
 
@@ -187,7 +190,7 @@ const UpdateDocument = async (req, res, next) => {
             message: "Document updated successfully",
             updatedUrl: uploadResult.secure_url,
             size: updatedDoc.length,
-            updatedAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(), toast: true
         });
     } catch (error) {
         next(error)
@@ -208,11 +211,35 @@ const SoftDeleteDocument = async (req, res, next) => {
             throw new AppError('Document not found', 404);
         }
 
-        res.status(200).json({ message: 'Document moved bin', document });
+        res.status(200).json({ message: 'Document moved to Bin successfully', document, toast: true });
     } catch (error) {
         next(error)
     }
 };
+
+const RestoreDocuments = async (req, res, next) => {
+    const { ids } = req.body; // Expecting an array of document IDs in the request body
+    console.log(req.body)
+    try {
+        const result = await Document.updateMany(
+            { _id: { $in: ids } }, // Match documents with the given IDs
+            { deletedAt: null }, // Restore documents by setting deletedAt to null
+        );
+
+        if (result.modifiedCount === 0) {
+            throw new AppError("No documents found to restore", 404);
+        }
+
+        res.status(200).json({
+            message: `${result.modifiedCount} document(s) restored successfully`,
+            toast: true
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
 
 const GetDeletedDocumentList = async (req, res, next) => {
     try {
@@ -237,11 +264,11 @@ const DeleteDocument = async (req, res, next) => {
             throw new AppError('Document not found', 404);
         }
 
-        res.status(200).json({ message: 'Document deleted successfully', document });
+        res.status(200).json({ message: 'Document deleted successfully', document, toast: true });
     } catch (error) {
         next(error)
     }
 };
 
 
-export default { GetDocumentById, GetDocumentTexts, UpdateDocument, CreateDocument, GetDocumentList, SoftDeleteDocument, GetDeletedDocumentList, DeleteDocument }
+export default { GetDocumentById, GetDocumentTexts, UpdateDocument, CreateDocument, GetDocumentList, SoftDeleteDocument, RestoreDocuments,  GetDeletedDocumentList, DeleteDocument }

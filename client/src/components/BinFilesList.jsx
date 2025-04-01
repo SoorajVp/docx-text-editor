@@ -2,14 +2,18 @@ import React, { useState } from 'react';
 import { IoIosDocument } from 'react-icons/io';
 import { getFileSizeInMB } from '../utils/helper';
 import { TiTick } from "react-icons/ti";
+import { BsTrash3Fill } from "react-icons/bs";
+import { MdOutlineRestore } from 'react-icons/md';
+
 
 const BinFilesList = ({ documents, loading, isCheckBox, handleCheckboxChange, selectedFiles }) => {
 
+    
     return (
         <div className="flex-1 overflow-y-auto mt-3 no-scrollbar">
             <ul className="space-y-2">
                 {loading
-                    ? Array.from({ length: 10 }).map((_, index) => (
+                    ? Array.from({ length: 5 }).map((_, index) => (
                         <li
                             key={index}
                             className="border border-neutral-300 h-16 dark:border-neutral-700 bg-neutral-100 dark:bg-black animate-pulse"
@@ -38,7 +42,7 @@ const BinFilesList = ({ documents, loading, isCheckBox, handleCheckboxChange, se
                                                 onChange={() => handleCheckboxChange(item?._id)}
                                                 className="peer hidden"
                                             />
-                                            <div className="w-6 h-6 border border-neutral-500 flex items-center justify-center peer-checked:bg-orange-500 peer-checked:border-orange-600">
+                                            <div className="w-5 h-5 border border-neutral-500 flex items-center justify-center peer-checked:bg-orange-500 peer-checked:border-orange-600">
                                                 {selectedFiles.includes(item?._id) && (
                                                     <TiTick size={20} className='text-white ' />
                                                 )}
@@ -46,9 +50,15 @@ const BinFilesList = ({ documents, loading, isCheckBox, handleCheckboxChange, se
                                         </label>
                                     </div>
                                     :
-                                    <button className="text-red-500 hover:text-red-700 transition duration-300">
-                                        Delete
+                                    <div className='flex gap-3'>
+                                        <button className="text-blue-400 hover:text-blue-500 transition duration-300">
+                                            <MdOutlineRestore size={20} />
+                                        </button>
+                                    <button className="text-red-500 hover:text-red-600 transition duration-300">
+                                            <BsTrash3Fill size={16} />
                                     </button>
+                                         
+                                    </div>
                             }
 
                         </li>

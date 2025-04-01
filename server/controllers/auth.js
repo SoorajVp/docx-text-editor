@@ -9,7 +9,7 @@ const GoogleLogin = async (req, res, next) => {
             user = await User.create({ given_name, family_name, name, email, picture })
         }
         const token = generateToken(user?.id);
-        res.status(201).json({ message: `${given_name} signed in successfully `, user, token })
+        res.status(201).json({ message: `${given_name} signed in successfully `, user, token, toast: true })
     } catch (error) {
         next(error)
     }

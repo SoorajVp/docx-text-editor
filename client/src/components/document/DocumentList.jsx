@@ -11,7 +11,7 @@ const DocumentList = ({ documents, listType, loading }) => {
                     <ul className="space-y-2">
                         {
                             loading ?
-                                Array.from({ length: 10 }).map((_, index) => (
+                                Array.from({ length: 5 }).map((_, index) => (
                                     <li key={index}
                                         className="border border-neutral-300 h-16 dark:border-neutral-700 bg-neutral-100 dark:bg-black animate-pulse">
                                     </li>
@@ -37,12 +37,12 @@ const DocumentList = ({ documents, listType, loading }) => {
                                 ))}
                     </ul>
 
-                    : <ul className="grid grid-cols-3 gap-2">
+                    : <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
                         {
                             loading ?
                                 Array.from({ length: 10 }).map((_, index) => (
                                     <li key={index}
-                                        className="border border-neutral-300 h-16 dark:border-neutral-700 bg-neutral-100 dark:bg-black animate-pulse">
+                                        className="border border-neutral-300 h-40 dark:border-neutral-700 bg-neutral-100 dark:bg-black animate-pulse">
                                     </li>
                                 ))
                                 :

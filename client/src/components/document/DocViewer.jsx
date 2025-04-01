@@ -9,7 +9,7 @@ const DocumentViewer = ({ url, mime_type }) => {
         <DocViewer
             documents={[{ uri: url }]} style={{ height: '100%' }}
             pluginRenderers={DocViewerRenderers}
-            className="h-max w-full max-w-screen-md overflow-auto border border-orange-600"
+            className="h-max w-full max-w-screen-md overflow-auto shadow-lg"
         />
     )
 }

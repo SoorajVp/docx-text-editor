@@ -15,7 +15,9 @@ router.get('/text-blocks', verifyUser, controller.GetDocumentTexts)
 
 router.post('/update', verifyUser, controller.UpdateDocument)
 
-router.post('/move-bin', verifyUser, controller.SoftDeleteDocument)
+router.post('/move-to-bin', verifyUser, controller.SoftDeleteDocument)
+
+router.post('/restore-bin', verifyUser, controller.RestoreDocuments)
 
 router.get('/bin-files', verifyUser, controller.GetDeletedDocumentList)
 

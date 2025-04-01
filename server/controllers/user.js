@@ -29,7 +29,7 @@ const UpdateUser = async (req, res, next) => {
         }
         let user = await User.findByIdAndUpdate(_id, user_details, {new: true})
 
-        res.status(201).json({ message: `Profile updated successfully `, user })
+        res.status(201).json({ message: `Profile updated successfully `, user, toast: true })
     } catch (error) {
         next(error)
     }

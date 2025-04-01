@@ -17,6 +17,9 @@ export const getFileSizeInMB = (bytes) => {
     return (bytes / (1024 * 1024)).toFixed(2) + "MB" // Convert to MB and keep 2 decimal places
 };
 
+export const getFileNameOG=(fileName) =>{
+    return fileName?.split('.').slice(0, -1).join('.');
+}
 
 export const formatDate = (isoTime) => {
     const date = new Date(isoTime);
