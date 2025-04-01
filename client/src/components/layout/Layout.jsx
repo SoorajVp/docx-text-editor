@@ -9,7 +9,7 @@ import Loading from '../Loading'
 import userService from '../../api/services/user'
 
 const Layout = () => {
-    const { darkMode } = useSelector((store) => store.app)
+    const { darkMode } = useSelector((store) => store.user)
     const { user_data, isFetching } = useSelector((store) => store.user)
     const dispatch = useDispatch()
 
@@ -25,7 +25,7 @@ const Layout = () => {
     }, [])
 
     return (
-        <div className={`h-screen flex flex-col ${darkMode && 'dark'}`}>
+        <div className={`h-screen flex flex-col ${(localStorage.getItem("dark_mode")  || darkMode) && 'dark'}`}>
             <Header />
             <main className="flex-1 overflow-y-auto bg-gradient-to-b from-white to-neutral-300 dark:from-neutral-800 dark:to-neutral-950 ">
                 {/* {

@@ -4,24 +4,35 @@ import { TbLayoutSidebarLeftCollapseFilled, TbLayoutSidebarLeftExpand } from "re
 import { IoMdDownload, IoMdTrash } from "react-icons/io";
 import { MdMovieEdit, MdUpdate } from "react-icons/md";
 import { formatDate, GetFileExtension, getFileNameOG, getFileSizeInMB } from '../../utils/helper';
+import ConfirmationModal from '../modals/AlertModal';
 
 const DetailSidebar = ({ document, onDownload, onDelete, onUpdate }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [showModal, setShowModal] = useState(false);
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
 
+    const handleDeleteClick = () => {
+        setShowModal(true);
+    };
+
+    const handleConfirmDelete = () => {
+        onDelete(document?._id);
+        setShowModal(false);
+    };
+
     return (
         <>
             {isSidebarOpen && (
-                <div className="fixed inset-0 opacity-50 z-20 lg:hidden bg-black dark:bg-white" onClick={toggleSidebar}></div>
+                <div className="fixed inset-0 opacity-50 z-10 lg:hidden bg-black dark:bg-white" onClick={toggleSidebar}></div>
             )}
 
             <div
                 className={`fixed lg:relative z-30 h-full transition-all duration-300 ease-in-out 
                 bg-neutral-300 dark:bg-black border-t-2 dark:border-neutral-800 
-                ${isSidebarOpen ? 'w-1/4' : 'w-16 overflow-hidden'}`}
+                ${isSidebarOpen ? 'w-64 lg:w-1/4' : 'w-16 overflow-hidden'}`}
             >
                 {/* Toggle Button */}
                 <button
@@ -29,7 +40,7 @@ const DetailSidebar = ({ document, onDownload, onDelete, onUpdate }) => {
                     className={`h-14 w-full rounded-md transition-colors 
                     text-gray-800 dark:text-gray-200
                     flex items-center ${isSidebarOpen ? "justify-between p-3" : "justify-center"}`}
-                >   {isSidebarOpen && <span className='ml-5 uppercase font-semibold text-sm'>{document?.file_name}</span>}
+                >   {isSidebarOpen && <span className='ml-4 uppercase font-semibold text-sm overflow-hidden'>{document?.file_name}</span>}
                     <span className="rounded-md transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400">
                         {isSidebarOpen ? <TbLayoutSidebarLeftCollapseFilled size={30} /> : <TbLayoutSidebarLeftExpand size={30} />}
                     </span>
@@ -49,13 +60,20 @@ const DetailSidebar = ({ document, onDownload, onDelete, onUpdate }) => {
                         <button className="flex items-center gap-3 p-2 text-gray-800 dark:text-gray-300 bg-gray-200 dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-md w-full" onClick={onUpdate}>
                             <MdUpdate size={20} /> {isSidebarOpen && "Update Document"}
                         </button>
-                        <button className="flex items-center gap-3 p-2 text-red-600 dark:text-red-400 bg-gray-200 dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-md w-full" onClick={() => onDelete(document?._id)}>
+                        <button className="flex items-center gap-3 p-2 text-red-600 dark:text-red-400 bg-gray-200 dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-md w-full" onClick={handleDeleteClick}>
                             <IoMdTrash size={20} /> {isSidebarOpen && "Delete Document"}
                         </button>
 
                     </ul>
                 </div>
             </div>
+            {showModal && (
+                <ConfirmationModal
+                    action="bin"
+                    onConfirm={handleConfirmDelete}
+                    onCancel={() => setShowModal(false)}
+                />
+            )}
         </>
     );
 };

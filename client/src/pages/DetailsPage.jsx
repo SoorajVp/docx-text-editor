@@ -42,7 +42,7 @@ const DetailsPage = () => {
     <div className='flex h-full'>
       {/* <DocSidebar document={document} /> */}
       <DetailSidebar document={document} onDownload={HandleDownload} onDelete={HandleMoveToBin } />
-      <div className='w-full h-full flex justify-center'>
+      <div className='w-full h-full flex justify-center ml-16'>
         <DocumentViewer url={document?.url} mime_type={GetFileExtension(document?.mime_type)} />
       </div>
     </div>

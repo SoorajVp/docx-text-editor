@@ -1,14 +1,17 @@
 import { googleLogout } from "@react-oauth/google";
 import React, { useEffect, useState } from "react";
 import { IoLogOutOutline } from "react-icons/io5";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setPageLoading, setUserDetails, setUserLoggout } from "../redux/slice/userSlice";
+import { setPageLoading, setUserDetails, setUserLoggout, toggleDarkMode } from "../redux/slice/userSlice";
 import userService from "../api/services/user";
+import ConfirmationModal from "./modals/AlertModal";
 
 const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
     const [isEditing, setIsEditing] = useState(false);
-    const [selectedImage, setSelectedImage] = useState(null); // Holds the new file for upload
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -35,6 +38,10 @@ const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
     const handleInputChange = (e) => {
         const { name, value, files } = e.target;
 
+        if (name === "theme") {
+            console.log(value)
+            dispatch(toggleDarkMode(value === 'dark' ? true : false))
+        }
         if (files?.[0]) {
             const file = files[0];
             setSelectedImage(file); // Store file for upload
@@ -44,6 +51,7 @@ const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
             setUser((prevUser) => ({ ...prevUser, [name]: value }));
         }
     };
+
 
     const handleSubmit = async () => {
         const formData = new FormData();
@@ -84,7 +92,7 @@ const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
     }
 
     return (
-        <div className="h-full w-full flex items-center justify-center">
+        <div className="h-full w-full flex items-center justify-center p-2">
             <div className="relative w-full bg-white max-w-4xl my-8 md:my-16 flex flex-col-reverse sm:flex-row items-start justify-between space-y-4 sm:space-y-0 sm:space-x-6 px-4 py-8 border border-gray-400 dark:border-gray-700 dark:bg-neutral-950 shadow-lg">
 
                 {/* Profile Details Section */}
@@ -177,6 +185,7 @@ const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
                                 Edit account information?
                             </p>
                         )}
+
                     </div>
                 </div>
 
@@ -196,13 +205,21 @@ const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
                             <button className="w-full border border-neutral-500 mt-2 dark:text-white text-sm py-0.5" onClick={() => document.getElementById("fileInput").click()}>
                                 Change Picture
                             </button> :
-                            <button onClick={handleLogOut} className="flex items-center gap-2 justify-center w-full border border-red-500 mt-2 text-red-700 dark:text-red-500 bg-neutral-100 dark:bg-neutral-900 py-1 font-semibold text-base">
+                            <button onClick={() =>setShowModal(true)} className="flex items-center gap-2 justify-center w-full border border-red-500 mt-2 text-red-700 dark:text-red-500 bg-neutral-100 dark:bg-neutral-900 py-1 font-semibold text-base">
                                 Logout <IoLogOutOutline size={20} />
                             </button>
                         }
                     </div>
                 </div>
             </div>
+
+            {showModal && (
+                <ConfirmationModal
+                    action="logout"
+                    onConfirm={handleLogOut}
+                    onCancel={() => setShowModal(false)}
+                />
+            )}
         </div>
     );
 };

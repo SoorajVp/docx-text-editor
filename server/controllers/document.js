@@ -38,7 +38,7 @@ const GetDocumentById = async (req, res, next) => {
             throw new AppError('Document not found', 404);
         }
 
-        res.status(200).json({ message: 'Document fetched successfully', document, toast: true });
+        res.status(200).json({ message: 'Document fetched successfully', document });
     } catch (error) {
         next(error)
     }
