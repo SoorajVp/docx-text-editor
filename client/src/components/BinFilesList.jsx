@@ -6,7 +6,7 @@ import { BsTrash3Fill } from "react-icons/bs";
 import { MdOutlineRestore } from 'react-icons/md';
 import ConfirmationModal from './modals/AlertModal';
 
-const BinFilesList = ({ documents, loading, restorFile, deleteFile, isCheckBox, handleCheckboxChange, selectedFiles }) => {
+const BinFileList = ({ documents, loading, restorFile, deleteFile, isCheckBox, handleCheckboxChange, selectedFiles }) => {
     const [showModal, setShowModal] = useState(false);
     const [modalAction, setModalAction] = useState(null);
     const [selectedFileId, setSelectedFileId] = useState(null);
@@ -15,6 +15,8 @@ const BinFilesList = ({ documents, loading, restorFile, deleteFile, isCheckBox, 
         if (modalAction === 'restore') {
             restorFile(selectedFileId);
         } else if (modalAction === 'delete') {
+            console.log("selectedFileId", selectedFileId);
+            
             deleteFile(selectedFileId);
         }
         setShowModal(false);
@@ -82,4 +84,4 @@ const BinFilesList = ({ documents, loading, restorFile, deleteFile, isCheckBox, 
     );
 };
 
-export default BinFilesList;
+export default BinFileList;

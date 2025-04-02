@@ -22,15 +22,16 @@ const DetailSidebar = ({ document, onDownload, onDelete, onUpdate }) => {
         onDelete(document?._id);
         setShowModal(false);
     };
+    
 
     return (
         <>
             {isSidebarOpen && (
-                <div className="fixed inset-0 opacity-50 z-10 lg:hidden bg-black dark:bg-white" onClick={toggleSidebar}></div>
+                <div className="fixed inset-0 opacity-50 z-10 lg:hidden bg-black dark:bg-white " onClick={toggleSidebar}></div>
             )}
 
             <div
-                className={`fixed lg:relative z-30 h-full transition-all duration-300 ease-in-out 
+                className={`fixed lg:relative z-30 h-full transition-all duration-300 ease-in-out overflow-auto
                 bg-neutral-300 dark:bg-black border-t-2 dark:border-neutral-800 
                 ${isSidebarOpen ? 'w-64 lg:w-1/4' : 'w-16 overflow-hidden'}`}
             >

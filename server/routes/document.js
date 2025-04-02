@@ -21,7 +21,7 @@ router.post('/restore-bin', verifyUser, controller.RestoreDocuments)
 
 router.get('/bin-files', verifyUser, controller.GetDeletedDocumentList)
 
-router.delete('/delete', verifyUser, controller.DeleteDocument)
+router.post('/delete', verifyUser, controller.DeleteDocuments)
 
 
 export default router;

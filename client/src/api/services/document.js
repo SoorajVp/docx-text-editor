@@ -13,6 +13,16 @@ const documentService = {
         return response.data
     },
 
+    GetDocumentTextBlocks: async (url) => {
+        const response = await apiClient.get(`/document/text-blocks?documentUrl=${url}`);
+        return response.data
+    },
+
+    UpdateDocument: async (payload) => {
+        const response = await apiClient.post(`/document/update`, payload);
+        return response.data
+    },
+
     GetDocumentById: async (documentId) => {
         const response = await apiClient.get(`/document/view?id=${documentId}`);
         return response.data
@@ -33,15 +43,14 @@ const documentService = {
         return response.data
     },
 
-    GetDocumentTextBlocks: async (url) => {
-        const response = await apiClient.get(`/document/text-blocks?documentUrl=${url}`);
+    DeleteBinDocuments: async (payload) => {
+        console.log("payloaadddd", payload)
+        const response = await apiClient.post('/document/delete', payload);
         return response.data
     },
+    
 
-    UpdateDocument: async (payload) => {
-        const response = await apiClient.post(`/document/update`, payload);
-        return response.data
-    },
+    
 }
 
 export default documentService

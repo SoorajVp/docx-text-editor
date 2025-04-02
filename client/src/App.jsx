@@ -14,6 +14,7 @@ import Loading from './components/Loading'
 import BinFilesPage from './pages/BinFilesPage'
 import DetailsPage from './pages/DetailsPage'
 import DocumentViewer from './components/document/DocViewer'
+import CreateDocument from './components/CreateDocument'
 
 function App() {
   const urlItems = JSON.parse(localStorage.getItem("url_value"));
@@ -40,6 +41,7 @@ function App() {
       <Route path='/' element={<Layout />} >
         <Route path="" element={<HomePage />} />
         <Route path="/edit" element={<EditingPage />} />
+        <Route path="/create" element={<CreateDocument />} />
         <Route path="/upload" element={<UploadPage />} />
         <Route path="/doc/view/:id" element={<DetailsPage />} />
         <Route path="/bin" element={<BinFilesPage />} />

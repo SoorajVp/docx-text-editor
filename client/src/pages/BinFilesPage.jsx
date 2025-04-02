@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import documentService from '../api/services/document';
-import BinFIlesList from '../components/BinFilesList';
+import BinFileList from '../components/BinFilesList';
 import ConfirmationModal from '../components/modals/AlertModal';
 
 const BinFilesPage = () => {
@@ -57,7 +57,7 @@ const BinFilesPage = () => {
 
     const handleDeleteFile = async (documentIds) => {
         setLoading(true);
-        await documentService.DeleteBinFiles({ ids: documentIds });
+        await documentService.DeleteBinDocuments({ ids: documentIds });
         setDocumentList(prevList => prevList.filter(doc => !documentIds.includes(doc._id)));
         setSelectedFiles([]);
         setIsCheckBox(false);
@@ -67,7 +67,7 @@ const BinFilesPage = () => {
     const handleDeleteAllFiles = async () => {
         setLoading(true);
         const mappedIds = groupDocumentIds();
-        await documentService.DeleteBinFiles({ ids: mappedIds });
+        await documentService.DeleteBinDocuments({ ids: mappedIds });
         setDocumentList([]);
         setSelectedFiles([]);
         setIsCheckBox(false);
@@ -107,30 +107,30 @@ const BinFilesPage = () => {
                         {
                             isCheckBox ?
                                 <>
-                                    <button onClick={() => { setIsCheckBox(false); setSelectedFiles([]) }} className="px-5 py-1 border-2 text-sm font-semibold border-neutral-500 dark:border-neutral-400 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-600 hover:text-white transition duration-300 ease-in-out">
+                                    <button onClick={() => { setIsCheckBox(false); setSelectedFiles([]) }} className="px-5 py-1 border-2 text-xs md:text-sm font-semibold border-neutral-500 dark:border-neutral-400 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-600 hover:text-white transition duration-300 ease-in-out">
                                         Cancel
                                     </button>
                                     {
                                         selectedFiles?.length > 0 &&
                                         <>
-                                            <button onClick={() => openModal("restore-selected")} className="px-5 py-1 border-2 text-sm font-medium border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white transition duration-300 ease-in-out">
-                                                Restore Selected
+                                            <button onClick={() => openModal("restore-selected")} className="px-5 py-1 border-2 text-xs md:text-sm font-medium border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white transition duration-300 ease-in-out">
+                                                Restore
                                             </button>
-                                            <button onClick={() => openModal("delete-selected")} className="px-5 py-1 border-2 text-sm font-medium border-red-500 text-red-500 hover:bg-red-600 hover:text-white transition duration-300 ease-in-out">
-                                                Delete Selected
+                                            <button onClick={() => openModal("delete-selected")} className="px-5 py-1 border-2 text-xs md:text-sm font-medium border-red-500 text-red-500 hover:bg-red-600 hover:text-white transition duration-300 ease-in-out">
+                                                Delete  
                                             </button>
                                         </>
                                     }
                                 </>
                                 :
                                 <>
-                                    <button onClick={() => setIsCheckBox(true)} className="px-5 py-1 border-2 text-sm font-semibold border-neutral-500 dark:border-neutral-400 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-600 hover:text-white transition duration-300 ease-in-out">
+                                    <button onClick={() => setIsCheckBox(true)} className="px-5 py-1 border-2 text-xs md:text-sm font-semibold border-neutral-500 dark:border-neutral-400 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-600 hover:text-white transition duration-300 ease-in-out">
                                         Select
                                     </button>
-                                    <button onClick={() => openModal("restore-all")} className="px-5 py-1 border-2 text-sm font-medium border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white transition duration-300 ease-in-out">
+                                    <button onClick={() => openModal("restore-all")} className="px-5 py-1 border-2 text-xs md:text-sm font-medium border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white transition duration-300 ease-in-out">
                                         Restore All
                                     </button>
-                                    <button onClick={() => openModal("delete-all")} className="px-5 py-1 border-2 text-sm font-medium border-red-500 text-red-500 hover:bg-red-600 hover:text-white transition duration-300 ease-in-out">
+                                    <button onClick={() => openModal("delete-all")} className="px-5 py-1 border-2 text-xs md:text-sm font-medium border-red-500 text-red-500 hover:bg-red-600 hover:text-white transition duration-300 ease-in-out">
                                         Delete All
                                     </button>
                                 </>
@@ -139,14 +139,21 @@ const BinFilesPage = () => {
                 </div>
             </div>
             {isCheckBox ?
-                <p className="text-neutral-700 dark:text-neutral-300 text-sm mb-1"> {selectedFiles?.length} documents selected </p> :
-                <p className="text-neutral-700 dark:text-neutral-300 text-sm mb-1">{loading ? `Loading documents...` : `Showing ${documentList?.length} deleted documents`}  </p>
+                <p className="text-neutral-700 dark:text-neutral-300 text-xs md:text-sm mb-1"> {selectedFiles?.length} documents selected </p> :
+                <p className="text-neutral-700 dark:text-neutral-300 text-xs md:text-sm mb-1">{loading ? `Loading documents...` : `Showing ${documentList?.length} deleted documents`}  </p>
             }
-            <BinFIlesList documents={documentList} loading={loading} restorFile={handleRestoreFile} selectedFiles={selectedFiles} handleCheckboxChange={handleCheckboxChange} isCheckBox={isCheckBox} />
+            <BinFileList
+                documents={documentList}
+                loading={loading}
+                restorFile={handleRestoreFile}
+                deleteFile={handleDeleteFile}
+                selectedFiles={selectedFiles}
+                handleCheckboxChange={handleCheckboxChange}
+                isCheckBox={isCheckBox}
+            />
 
-            {/* Show confirmation modal if action is pending */}
             {showModal &&
-                <ConfirmationModal 
+                <ConfirmationModal
                     action={modalAction}
                     onConfirm={handleConfirmAction}
                     onCancel={() => setShowModal(false)}

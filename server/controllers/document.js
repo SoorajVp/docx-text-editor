@@ -255,20 +255,26 @@ const GetDeletedDocumentList = async (req, res, next) => {
     }
 }
 
-const DeleteDocument = async (req, res, next) => {
-    const { id } = req.query;
+const DeleteDocuments = async (req, res, next) => {
+    const { ids } = req.body; // Expecting an array of document IDs
+    console.log('req.body', req.body)
     try {
-        const document = await Document.findByIdAndDelete(id);
+        
+        const result = await Document.deleteMany({ _id: { $in: ids } });
 
-        if (!document) {
-            throw new AppError('Document not found', 404);
+        if (result.deletedCount === 0) {
+            throw new AppError('No documents found to delete', 404);
         }
 
-        res.status(200).json({ message: 'Document deleted successfully', document, toast: true });
+        res.status(200).json({
+            message: `${result.deletedCount} document(s) deleted successfully`,
+            toast: true
+        });
     } catch (error) {
-        next(error)
+        next(error);
     }
 };
 
 
-export default { GetDocumentById, GetDocumentTexts, UpdateDocument, CreateDocument, GetDocumentList, SoftDeleteDocument, RestoreDocuments,  GetDeletedDocumentList, DeleteDocument }
+
+export default { GetDocumentById, GetDocumentTexts, UpdateDocument, CreateDocument, GetDocumentList, SoftDeleteDocument, RestoreDocuments, GetDeletedDocumentList, DeleteDocuments }

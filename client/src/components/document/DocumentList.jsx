@@ -26,13 +26,18 @@ const DocumentList = ({ documents, listType, loading }) => {
                                             <IoIosDocument size={35} className='text-gray-500' />
                                             <div className="flex-row pl-2">
                                                 <p className="text-gray-900 dark:text-gray-100 -mb-1">{item?.file_name}</p>
-                                                <span className="text-neutral-500 text-xs ">{getFileSizeInMB(item?.size)}</span>
+                                                <span className="text-neutral-500 text-xs ">{getFileSizeInMB(item?.size)+ " - " + formatDate(item?.createdAt)} </span>
                                             </div>
 
                                         </div>
-                                        <button className="text-neutral-900 dark:text-neutral-100  hover:text-neutral-600 dark:hover:text-neutral-400 transition duration-300">
-                                            <IoMdMore size={30} />
-                                        </button>
+                                        <div className='flex items-center'>
+                                            <div className="flex-row text-right">
+                                                <p className="text-neutral-500 text-xs ">Last Modified <br /> {formatDate(item?.updatedAt)}</p>
+                                            </div>
+                                            {/* <button className="text-neutral-900 dark:text-neutral-100  hover:text-neutral-600 dark:hover:text-neutral-400 transition duration-300">
+                                                <IoMdMore size={30} />
+                                            </button> */}
+                                        </div>
                                     </Link>
                                 ))}
                     </ul>

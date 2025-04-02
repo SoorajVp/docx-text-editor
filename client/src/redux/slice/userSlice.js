@@ -29,6 +29,7 @@ const userSlice = createSlice({
         },
 
         toggleDarkMode: (state, action) => {
+            localStorage.setItem("dark_mode", action.payload)
             state.darkMode = action.payload;
         },
 

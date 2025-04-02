@@ -29,6 +29,10 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        status: {
+            type: Boolean,
+            default: true,
+        },
         theme: {
             type: String,
             enum: ['light', 'dark'], // Optional: Define theme
