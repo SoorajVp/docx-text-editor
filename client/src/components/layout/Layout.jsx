@@ -24,8 +24,9 @@ const Layout = () => {
         }
     }, [])
 
+
     return (
-        <div className={`h-screen flex flex-col ${( darkMode) && 'dark'}`}>
+        <div className={`h-screen flex flex-col ${(darkMode) && 'dark'}`}>
             <Header />
             <main className="flex-1 overflow-y-auto bg-gradient-to-b from-white to-neutral-300 dark:from-neutral-800 dark:to-neutral-950 ">
                 {

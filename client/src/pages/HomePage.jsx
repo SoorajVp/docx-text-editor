@@ -71,7 +71,7 @@ const HomePage = () => {
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search"
               value={Search}
-              className="w-full pl-10 pr-3 py-1 text-xs md:text-sm  bg-white dark:bg-black text-black dark:text-neutral-200 border border-gray-400 dark:border-gray-700 focus:border-orange-500 dark:focus:border-orange-300 outline-none transition duration-300"
+              className="w-full pl-10 pr-3 py-1 text-sm  bg-white dark:bg-black text-black dark:text-neutral-200 border border-gray-400 dark:border-gray-700 focus:border-orange-500 dark:focus:border-orange-300 outline-none transition duration-300"
             />
           </div>
 

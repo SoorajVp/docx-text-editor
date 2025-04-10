@@ -37,13 +37,13 @@ const CreateDocument = () => {
 
     // Convert Quill content to Word format
     const handleDownloadWord = () => {
-       
+      
     };
 
     return (
         <div className="max-w-5xl container mx-auto py-2 h-full overflow-hidden p-2">
             <h1 className="text-2xl font-bold mb-2 text-neutral-700 dark:text-neutral-200">Create a New Document</h1>
-            <label htmlFor="documentTitle" className="block text-sm font-medium text-neutral-500">File Name</label>
+            <label htmlFor="documentTitle" className="block text-XS text-neutral-500">File Name</label>
             <div className='flex items-center justify-between gap-2'> 
                 <div className="w-full">
                     
@@ -55,9 +55,9 @@ const CreateDocument = () => {
                         onChange={(e) => setDocumentTitle(e.target.value)}
                     />
                 </div>
-                <div className="flex gap-4 h-min">
+                <div className="flex gap-2 h-min">
                     <button onClick={handleSubmit} className="px-5 py-1.5 text-nowrap border-2 text-xs md:text-sm font-medium border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white transition duration-300 ease-in-out">
-                        Submit
+                        Download
                     </button>
                     <button onClick={handleDownloadWord} className="px-5 py-1.5 text-nowrap border-2 text-xs md:text-sm font-medium border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white transition duration-300 ease-in-out">
                         Download as Word

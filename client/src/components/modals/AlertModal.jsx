@@ -34,8 +34,8 @@ const ConfirmationModal = ({ action, onConfirm, onCancel }) => {
                                 action === 'bin' ? 'Move to Bin' :
                                     action === 'delete-all' ? 'Delete All' :
                                         action === 'restore-all' ? 'Restore All' :
-                                            action === 'restore-selected' ? 'Restore Selected' :
-                                                action === 'delete-selected' ? 'Delete Selected' :
+                                            action === 'restore-selected' ? 'Restore' :
+                                                action === 'delete-selected' ? 'Delete' :
                                                     action === 'logout' ? 'Confirm' :
                                                         'Move'}
                     </button>

@@ -12,14 +12,7 @@ createRoot(document.getElementById("root")).render(
   <ContextProvider>
     <Provider store={store}>
       <GoogleOAuthProvider clientId="364668099021-5ka3pobjqunoduedu4m8g51s0j9b8jcg.apps.googleusercontent.com">
-        <Toaster
-          position="bottom-right"
-          containerStyle={{
-            fontFamily: "serif",
-            fontSize: "16px",
-          }}
-          reverseOrder={false}
-        />
+       
         <BrowserRouter>
           <App />
         </BrowserRouter>
