@@ -17,7 +17,6 @@ const userSlice = createSlice({
         },
 
         setUserDetails: (state, action) => {
-            console.log(action.payload)
             const token = localStorage.getItem("auth_token")
             if (!token) {
                 localStorage.setItem("auth_token", action.payload.token)

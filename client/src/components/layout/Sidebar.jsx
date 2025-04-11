@@ -41,7 +41,7 @@ const DetailSidebar = ({ document, onDownload, onDelete, onUpdate }) => {
                     className={`h-14 w-full rounded-md transition-colors 
                     text-gray-800 dark:text-gray-200
                     flex items-center ${isSidebarOpen ? "justify-between p-3" : "justify-center"}`}
-                >   {isSidebarOpen && <span className='ml-4 uppercase font-semibold text-sm overflow-hidden'>{document?.file_name}</span>}
+                >   {isSidebarOpen && <span className='ml-4 uppercase font-semibold text-sm overflow-hidden truncate whitespace-nowrap w-52 text-start'>{getFileNameOG(document?.file_name)}</span>}
                     <span className="rounded-md transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400">
                         {isSidebarOpen ? <TbLayoutSidebarLeftCollapseFilled size={30} /> : <TbLayoutSidebarLeftExpand size={30} />}
                     </span>
@@ -50,7 +50,7 @@ const DetailSidebar = ({ document, onDownload, onDelete, onUpdate }) => {
                 {/* Sidebar Items */}
                 <div className={isSidebarOpen ? 'mx-5' : 'flex justify-center'}>
                     <ul className="space-y-3">
-                        <SidebarItem icon={<FaFile size={20} />} text={getFileNameOG(document?.file_name)} isSidebarOpen={isSidebarOpen} />
+                        <SidebarItem icon={<FaFile size={20} />} text={document?.file_name} isSidebarOpen={isSidebarOpen} />
                         <SidebarItem icon={<FaSave size={20} />} text={getFileSizeInMB(document?.size)} isSidebarOpen={isSidebarOpen} />
                         <SidebarItem icon={<FaCalendarAlt size={20} />} text={formatDate(document?.createdAt)} isSidebarOpen={isSidebarOpen} />
                         <SidebarItem icon={<MdMovieEdit size={20} />} text={formatDate(document?.updatedAt)} isSidebarOpen={isSidebarOpen} />
@@ -64,7 +64,6 @@ const DetailSidebar = ({ document, onDownload, onDelete, onUpdate }) => {
                         <button className="flex items-center gap-3 p-2 text-red-600 dark:text-red-400 bg-gray-200 dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-md w-full" onClick={handleDeleteClick}>
                             <IoMdTrash size={20} /> {isSidebarOpen && "Delete Document"}
                         </button>
-
                     </ul>
                 </div>
             </div>
@@ -83,7 +82,7 @@ const SidebarItem = ({ icon, text, isSidebarOpen, isActive }) => {
     return (
         <li>
             <div
-                className="flex items-center gap-3 p-2 rounded-md transition-colors text-gray-800 dark:text-gray-300" >
+                className="flex items-center gap-3 p-2 rounded-md transition-colors text-gray-800 dark:text-gray-300 truncate whitespace-nowrap" >
                 {icon}
                 {isSidebarOpen && text}
             </div>

@@ -12,15 +12,17 @@ import BinFilesPage from '../pages/BinFilesPage';
 import ProfilePage from '../pages/ProfilePage';
 import Loading from '../components/Loading';
 import EditingPage from '../pages/EditingPage';
+import DocumentPage from '../pages/DocumentPage';
 
 
 function MainRoutes() {
    
-
     return (
         <Routes>
             <Route path="/test" element={<DocumentViewer />} />
             <Route path="/get-started" element={<LandingPage />} />
+            <Route path="/document" element={<DocumentPage />} />
+
 
             <Route path='/' element={<Layout />} >
                 <Route path="" element={<HomePage />} />

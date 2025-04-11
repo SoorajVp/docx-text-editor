@@ -25,7 +25,7 @@ const DocumentList = ({ documents, listType, loading }) => {
                                         <div className="flex items-center">
                                             <IoIosDocument size={35} className='text-gray-500' />
                                             <div className="flex-row pl-2">
-                                                <p className="text-gray-900 dark:text-gray-100 -mb-1">{item?.file_name}</p>
+                                                <p className="text-gray-900 dark:text-gray-100 -mb-1 text-sm md:text-base truncate overflow-hidden whitespace-nowrap w-64 ">{item?.file_name}</p>
                                                 <span className="text-neutral-500 text-xs ">{getFileSizeInMB(item?.size)+ " - " + formatDate(item?.createdAt)} </span>
                                             </div>
 

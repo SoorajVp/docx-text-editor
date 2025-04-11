@@ -11,6 +11,13 @@ const LandingPage = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
+  useEffect(() => {
+    const token = localStorage.getItem("auth_token")
+    if(token) {
+      navigate("/")
+    }
+  } ,[])
+
   // Google Login Hook
   const login = useGoogleLogin({
     onSuccess: async(codeResponse) => {
