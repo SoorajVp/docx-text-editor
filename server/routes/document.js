@@ -11,6 +11,8 @@ router.get('/view', verifyUser, controller.GetDocumentById)
 
 router.get('/list', verifyUser, controller.GetDocumentList)
 
+router.post('/change-filename', verifyUser, controller.UpdateFileNameById)
+
 router.get('/text-blocks', verifyUser, controller.GetDocumentTexts)
 
 router.post('/update', verifyUser, controller.UpdateDocument)

@@ -9,7 +9,7 @@ export const GetFileExtension = (mimeType) => {
             return "pptx";
 
         default:
-            return "/icons/default_icon.png"; // Default icon
+            return "unKnown"; // Default icon
     }
 };
 

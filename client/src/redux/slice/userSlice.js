@@ -1,6 +1,5 @@
 
 import { createSlice } from '@reduxjs/toolkit';
-console.log("heyyyyy", localStorage.getItem("dark_mode"))
 const initialState = {
     darkMode: localStorage.getItem("dark_mode"),
     user_data: null,

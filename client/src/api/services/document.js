@@ -13,6 +13,11 @@ const documentService = {
         return response.data
     },
 
+    UpdateFileName: async (payload) => {
+        const response = await apiClient.post(`/document/change-filename`, payload);
+        return response.data
+    },
+
     GetDocumentTextBlocks: async (url) => {
         const response = await apiClient.get(`/document/text-blocks?documentUrl=${url}`);
         return response.data

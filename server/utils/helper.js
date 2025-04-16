@@ -38,7 +38,19 @@ const GenerateFileName = (url) => {
     return fileName
 };
 
+const GetFileExtFromMimeType = (mimeType) => {
+    switch (mimeType) {
+        case "application/pdf":
+            return "pdf";
+        case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+            return "docx";
+        case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+            return "pptx";
+
+        default:
+            return "unKnown"; // Default icon
+    }
+};
 
 
-
-export default { ConvertDocToXML, GenerateFileName, cloudinaryUpload }
+export default { ConvertDocToXML, GenerateFileName, cloudinaryUpload, GetFileExtFromMimeType }

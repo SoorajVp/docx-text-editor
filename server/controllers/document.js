@@ -44,6 +44,24 @@ const GetDocumentById = async (req, res, next) => {
     }
 }
 
+
+const UpdateFileNameById = async (req, res, next) => {
+    try {
+        const { id, fileName, mimetype } = req.body
+        const ext = helper.GetFileExtFromMimeType(mimetype)
+
+        const document = await Document.findByIdAndUpdate(id, { file_name: fileName +"." + ext } , {new: true});
+
+        if (!document) {
+            throw new AppError('Document not found', 404);
+        }
+
+        res.status(200).json({ message: 'File name updated successfully', document, toast: true });
+    } catch (error) {
+        next(error)
+    }
+}
+
 const GetDocumentList = async (req, res, next) => {
     try {
         const _id = req.userId
@@ -277,4 +295,4 @@ const DeleteDocuments = async (req, res, next) => {
 
 
 
-export default { GetDocumentById, GetDocumentTexts, UpdateDocument, CreateDocument, GetDocumentList, SoftDeleteDocument, RestoreDocuments, GetDeletedDocumentList, DeleteDocuments }
+export default { GetDocumentById, UpdateFileNameById, GetDocumentTexts, UpdateDocument, CreateDocument, GetDocumentList, SoftDeleteDocument, RestoreDocuments, GetDeletedDocumentList, DeleteDocuments }

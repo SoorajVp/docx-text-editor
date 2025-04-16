@@ -71,10 +71,23 @@ const DetailsPage = () => {
     navigate('/')
   }
 
+  const HandleSaveFileName = async ( fileName ) => {
+    // Your custom logic to save the file name
+    console.log("Saving:", fileName);
+    const payload = {
+      id: document?._id, 
+      mimetype: document?.mime_type,
+      fileName: fileName
+    }
+    const response = await documentService.UpdateFileName(payload);
+    console.log(document)
+    setDocument(response?.document)
+  };
+
   return (
     <div className='flex h-full'>
       {/* <DocSidebar document={document} /> */}
-      <DetailSidebar document={document} onDownload={HandleDownload} onDelete={HandleMoveToBin} />
+      <DetailSidebar document={document} onDownload={HandleDownload} onDelete={HandleMoveToBin} onSaveFileName={HandleSaveFileName} />
       <div className='w-full h-full flex justify-center ml-16'>
         <DocumentViewer url={document?.url} mime_type={GetFileExtension(document?.mime_type)} />
       </div>
