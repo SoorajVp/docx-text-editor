@@ -1,17 +1,17 @@
-import React from 'react'
+import React from 'react';
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 import "@cyntler/react-doc-viewer/dist/index.css";
-import "./Document.css"
+import "./Document.css";
 
-const DocumentViewer = ({ url, mime_type }) => {
+const DocumentViewer = ({ file, url }) => {
     return (
-
         <DocViewer
-            documents={[{ uri: url }]} style={{ height: '100%' }}
+            documents={[file ? { file } : { uri: url }]}
             pluginRenderers={DocViewerRenderers}
+            style={{ height: '100%' }}
             className="h-max w-full max-w-screen-md overflow-auto shadow-lg"
         />
-    )
-}
+    );
+};
 
-export default DocumentViewer
+export default DocumentViewer;

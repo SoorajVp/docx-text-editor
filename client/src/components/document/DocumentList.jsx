@@ -26,7 +26,7 @@ const DocumentList = ({ documents, listType, loading }) => {
                                             <IoIosDocument size={35} className='text-gray-500' />
                                             <div className="flex-row pl-2">
                                                 <p className="text-gray-900 dark:text-gray-100 -mb-1 text-sm md:text-base truncate overflow-hidden whitespace-nowrap w-64 ">{item?.file_name}</p>
-                                                <span className="text-neutral-500 text-xs ">{getFileSizeInMB(item?.size)+ " - " + formatDate(item?.createdAt)} </span>
+                                                <span className="text-neutral-500 text-xs ">{getFileSizeInMB(item?.size) + " - " + formatDate(item?.createdAt)} </span>
                                             </div>
 
                                         </div>
@@ -57,11 +57,10 @@ const DocumentList = ({ documents, listType, loading }) => {
                                         className="text-center border border-neutral-300 hover:border-orange-400 dark:hover:border-orange-600 dark:border-neutral-700 bg-neutral-100 dark:bg-black p-5 shadow-md transition duration-500 ease-in-out"
                                     >
                                         <IoIosDocument size={60} className='text-gray-500 mx-auto -mb-3' />
-                                        {/* <img src={getFileIcon(item?.mime_type)} alt="LOGO" className="w-8 h-8 object-cover object-center" /> */}
                                         <span className="text-neutral-500 text-xs ">{getFileSizeInMB(item?.size)}</span>
-                                        <p className="text-gray-900 dark:text-gray-100 -mb-1">{item?.file_name}</p>
-                                        <p className="text-neutral-500 text-xs mt-1">{formatDate(item?.updatedAt)}</p>
-
+                                        <p className="text-gray-900 dark:text-gray-100 -mb-1 text-sm md:text-base truncate overflow-hidden whitespace-nowrap ">{item?.file_name}</p>
+                                        <p className="text-neutral-500 text-xs mt-1">{formatDate(item?.createdAt)}</p>
+                                        <p className="text-neutral-500 text-xs mt-1">Modified - {formatDate(item?.updatedAt)}</p>
                                     </Link>
                                 ))}
                     </ul>
