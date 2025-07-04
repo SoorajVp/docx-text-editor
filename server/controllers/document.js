@@ -50,7 +50,7 @@ const UpdateFileNameById = async (req, res, next) => {
         const { id, fileName, mimetype } = req.body
         const ext = helper.GetFileExtFromMimeType(mimetype)
 
-        const document = await Document.findByIdAndUpdate(id, { file_name: fileName +"." + ext } , {new: true});
+        const document = await Document.findByIdAndUpdate(id, { file_name: fileName + "." + ext }, { new: true });
 
         if (!document) {
             throw new AppError('Document not found', 404);
@@ -69,13 +69,13 @@ const GetDocumentList = async (req, res, next) => {
 
         let filter = {
             user_id: _id,
-            deletedAt: null 
+            deletedAt: null
         };
 
         if (search) {
             filter.$or = [
                 { file_name: { $regex: search, $options: "i" } },
-                { mime_type: { $regex: search, $options: "i" } }, 
+                { mime_type: { $regex: search, $options: "i" } },
             ];
         }
 
@@ -88,46 +88,40 @@ const GetDocumentList = async (req, res, next) => {
 }
 
 const GetDocumentTexts = async (req, res, next) => {
-
     try {
-        const { documentUrl } = req.query;
-        const response = await axios.get(documentUrl, { responseType: "arraybuffer" });
-        const originalDoc = Buffer.from(response.data);
+        const { id } = req.query;
+        const document = await Document.findById(id);
 
-        // Load the DOCX as a ZIP archive
-        const zip = await JSZip.loadAsync(originalDoc);
-        const documentXml = await zip.file("word/document.xml").async("string");
-        // console.log('documentXml ---------------------> ', documentXml)
-        // Parse the XML content
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(documentXml, "application/xml");
+        if (!document) {
+            throw new AppError("Document not found", 404);
+        }
 
-        // Extract all <w:p> (paragraph) elements
-        const paragraphElements = Array.from(doc.getElementsByTagName("w:p"));
+        let textBlocks;
 
-        // Extract individual word/text information from <w:t> tags
-        const textBlocks = [];
-        paragraphElements.forEach((para, paraIndex) => {
-            const paraId = para.getAttribute("w14:paraId") || null; // Get w14:paraId
-            const textId = para.getAttribute("w14:textId") || null; // Get w14:textId
+        switch (document.mime_type) {
+            case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                textBlocks = await helper.DocxTextBlocksFromUrl(document.url);
+                break;
 
-            // Extract each <w:t> (text) element inside the paragraph
-            const textElements = Array.from(para.getElementsByTagName("w:t"));
-            textElements.forEach((textElement, textIndex) => {
-                textBlocks.push({
-                    id: `para-${paraIndex}-text-${textIndex}`,
-                    paraId,
-                    textId,
-                    text: textElement.textContent || "", // The actual text content of <w:t>
+            case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+                const data = await helper.PptxTextBlocksFromUrl(document.url);
+
+                // Sort slides numerically
+                textBlocks = data.sort((a, b) => {
+                    const slideNumberA = parseInt(a.slide.match(/slide(\d+)\.xml/)[1]);
+                    const slideNumberB = parseInt(b.slide.match(/slide(\d+)\.xml/)[1]);
+                    return slideNumberA - slideNumberB;
                 });
-            });
-        });
+                break;
 
-        // Send the text blocks as a response
-        res.status(200).json({ textBlocks, message: "Text blocks fetched" });
+            default:
+                throw new AppError("Unknown Document Type", 400);
+        }
+
+        res.status(200).json({ textBlocks, document, message: "Text blocks fetched" });
     } catch (error) {
         console.error("Error:", error);
-        next(error)
+        next(error);
     }
 };
 
@@ -277,7 +271,7 @@ const DeleteDocuments = async (req, res, next) => {
     const { ids } = req.body; // Expecting an array of document IDs
     console.log('req.body', req.body)
     try {
-        
+
         const result = await Document.deleteMany({ _id: { $in: ids } });
 
         if (result.deletedCount === 0) {

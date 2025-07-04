@@ -1,3 +1,5 @@
+import { saveAs } from 'file-saver';
+import toast from 'react-hot-toast'
 
 export const GetFileExtension = (mimeType) => {
     switch (mimeType) {
@@ -42,26 +44,48 @@ export const formatDate = (isoTime) => {
     }
 }
 
-export const DownloadDocument = async (url, fileName) => {
+
+export const DownloadFile = async (url, fileName) => {
     try {
-        // Fetch the file as a Blob
+        toast.loading("File Downloading...", {
+            style: {
+                border: '1px solid #5ca336',
+                borderRadius: '5px',
+                padding: '8px',
+                color: '#fff',
+                backgroundColor: '#1a1a1a',
+            }
+        });
         const response = await fetch(url);
-        if (!response.ok) throw new Error("Failed to fetch file");
-
         const blob = await response.blob();
-        const blobUrl = URL.createObjectURL(blob);
-
-        // Create a temporary anchor element
-        const link = document.createElement("a");
-        link.href = blobUrl;
-        link.download = fileName || "download"; // Default name if not provided
-        document.body.appendChild(link);
-        link.click();
-
-        // Cleanup
-        document.body.removeChild(link);
-        URL.revokeObjectURL(blobUrl);
+        saveAs(blob, fileName); // Triggers the download
+        toast.dismiss()
+        toast("Download Completed", {
+            style: {
+                border: '1px solid #5ca336',
+                borderRadius: '5px',
+                padding: '8px',
+                color: '#fff',
+                backgroundColor: '#1a1a1a',
+            },
+            icon: "✔️"
+        });
     } catch (error) {
-        console.error("Download failed:", error);
+        toast.dismiss()
+        console.error('Download failed:', error);
+        toast.error("Error While Downloading", {
+            style: {
+                border: '1px solid #ff4040',
+                borderRadius: '0px',
+                padding: '8px',
+                color: '#fff',
+                backgroundColor: '#1a1a1a',
+            },
+            iconTheme: {
+                primary: '#ff1e1e',
+                secondary: '#FFFAEE',
+            },
+        });
     }
-};
+
+}

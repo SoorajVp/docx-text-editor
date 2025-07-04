@@ -28,6 +28,7 @@ app.use("/api/auth", authRoutes)
 app.use("/api/user", userRoutes)
 app.use("/api/document", documentRoutes)
 
+
 app.get("*", ( req, res) => {
     res.status(404).json({
         message: "Invalid server path" , 

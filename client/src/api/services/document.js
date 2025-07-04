@@ -18,8 +18,8 @@ const documentService = {
         return response.data
     },
 
-    GetDocumentTextBlocks: async (url) => {
-        const response = await apiClient.get(`/document/text-blocks?documentUrl=${url}`);
+    GetDocumentTextBlocks: async (id) => {
+        const response = await apiClient.get(`/document/text-blocks?id=${id}`);
         return response.data
     },
 

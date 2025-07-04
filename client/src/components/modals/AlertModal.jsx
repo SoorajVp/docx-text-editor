@@ -4,7 +4,7 @@ const ConfirmationModal = ({ action, onConfirm, onCancel }) => {
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-white dark:bg-neutral-800 p-6 rounded-sm shadow-2xl max-w-sm w-full">
-                <h2 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">
+                <h2 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
                     {action === 'restore' && 'Restore File'}
                     {action === 'bin' && 'Move File to Bin'}
                     {action === 'delete' && 'Permanently Delete File'}

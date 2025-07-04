@@ -4,7 +4,7 @@ import 'react-quill/dist/quill.snow.css';  // Import Quill styles
 
 const CreateDocument = () => {
     const [editorContent, setEditorContent] = useState('');
-    const [documentTitle, setDocumentTitle] = useState('');
+    const [documentTitle, setDocumentTitle] = useState('example');
 
     // Configure the modules for react-quill
     const modules = {
@@ -23,6 +23,7 @@ const CreateDocument = () => {
 
     // Handle content change in Quill editor
     const handleEditorChange = (value) => {
+        console.log('value', value)
         setEditorContent(value);
     };
 
@@ -35,10 +36,36 @@ const CreateDocument = () => {
         console.log('Document Submitted:', { documentTitle, editorContent });
     };
 
-    // Convert Quill content to Word format
-    const handleDownloadWord = () => {
-        console.log("Submit =========> ", editorContent );
-    };  
+    const saveAsDocument = async (format) => {
+        const editor = quillRef.current.getEditor();
+        const html = editor.root.innerHTML;
+        const delta = editor.getContents();
+
+        try {
+            const response = await fetch('/api/export', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    content: html,
+                    format: format
+                }),
+            });
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `document.${format}`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            a.remove();
+        } catch (error) {
+            console.error('Export failed:', error);
+        }
+      };
 
     return (
         <div className="max-w-5xl container mx-auto py-2 h-full overflow-hidden p-2">
@@ -58,8 +85,8 @@ const CreateDocument = () => {
                     <button onClick={handleSubmit} className="px-5 py-1.5 text-nowrap border-2 text-xs md:text-sm font-medium border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white transition duration-300 ease-in-out">
                         Download
                     </button>
-                    <button onClick={handleDownloadWord} className="px-5 py-1.5 text-nowrap border-2 text-xs md:text-sm font-medium border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white transition duration-300 ease-in-out">
-                        Download as Word
+                    <button onClick={saveAsDocument} className="px-5 py-1.5 text-nowrap border-2 text-xs md:text-sm font-medium border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white transition duration-300 ease-in-out">
+                        Save Document
                     </button>
                    
                 </div>

@@ -12,10 +12,10 @@ const HomePage = () => {
   const [listType, setListType] = useState("row")
   const [loading, setLoading] = useState(true)
   const [Search, setSearch] = useState("")
-  const navigate = useNavigate()
   const [debouncedTerm, setDebouncedTerm] = useState("")
   const [showDropdown, setShowDropdown] = useState(false)
-
+  const navigate = useNavigate()
+  
   // Reference for dropdown
   const dropdownRef = useRef(null)
 
@@ -59,8 +59,9 @@ const HomePage = () => {
     }
   }, [])
 
+
   return (
-    <div className="max-w-5xl mx-auto h-[90vh] p-2 flex flex-col">
+    <div className="max-w-5xl mx-auto h-[90vh] pt-2 flex flex-col">
       <div className="z-10">
         <div className="flex justify-between items-center">
           {/* Search Input */}
@@ -93,7 +94,7 @@ const HomePage = () => {
               </button>
 
               {showDropdown && (
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-black shadow-md rounded-md border border-gray-300 dark:border-gray-700">
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-black shadow-md border border-gray-300 dark:border-gray-700">
                   <button
                     onClick={() => {
                       navigate("/upload")

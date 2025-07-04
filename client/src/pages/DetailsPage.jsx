@@ -6,88 +6,48 @@ import { GetFileExtension } from '../utils/helper'
 import DetailSidebar from '../components/layout/Sidebar'
 import { saveAs } from 'file-saver';
 import toast from 'react-hot-toast'
+import { setDocumentData } from '../redux/slice/documentSlice'
+import { useDispatch } from 'react-redux'
 
 const DetailsPage = () => {
   const { id } = useParams()
-  const navigate = useNavigate()
   const [document, setDocument] = useState(null)
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchDocumentById = async () => {
       const { document } = await documentService.GetDocumentById(id)
       setDocument(document)
+      dispatch(setDocumentData(document));
     }
     fetchDocumentById()
   }, [])
 
-
-  const HandleDownload = async (url, fileName) => {
-    try {
-      toast.loading("File Downloading...", {
-        style: {
-          border: '1px solid #5ca336',
-          borderRadius: '5px',
-          padding: '8px',
-          color: '#fff',
-          backgroundColor: '#1a1a1a',
-        }
-      });
-      const response = await fetch(url);
-      const blob = await response.blob();
-      saveAs(blob, fileName); // Triggers the download
-      toast.dismiss()
-      toast("Download Completed", {
-        style: {
-          border: '1px solid #5ca336',
-          borderRadius: '5px',
-          padding: '8px',
-          color: '#fff',
-          backgroundColor: '#1a1a1a',
-        },
-        icon: "✔️"
-      });
-    } catch (error) {
-      toast.dismiss()
-      console.error('Download failed:', error);
-      toast.error("Error While Downloading", {
-        style: {
-          border: '1px solid #ff4040',
-          borderRadius: '0px',
-          padding: '8px',
-          color: '#fff',
-          backgroundColor: '#1a1a1a',
-        },
-        iconTheme: {
-          primary: '#ff1e1e',
-          secondary: '#FFFAEE',
-        },
-      });
-    }
-
-  }
 
   const HandleMoveToBin = async (id) => {
     await documentService.DocumentSoftDelete(id)
     navigate('/')
   }
 
-  const HandleSaveFileName = async ( fileName ) => {
+  const HandleSaveFileName = async (fileName, document) => {
     // Your custom logic to save the file name
     console.log("Saving:", fileName);
     const payload = {
-      id: document?._id, 
+      id: document?._id,
       mimetype: document?.mime_type,
       fileName: fileName
     }
     const response = await documentService.UpdateFileName(payload);
-    console.log(document)
-    setDocument(response?.document)
+    setDocument(response?.document);
+    dispatch(setDocumentData(response?.document));
+
   };
 
   return (
     <div className='flex h-full'>
       {/* <DocSidebar document={document} /> */}
-      <DetailSidebar document={document} onDownload={HandleDownload} onDelete={HandleMoveToBin} onSaveFileName={HandleSaveFileName} />
+      <DetailSidebar onDelete={HandleMoveToBin} onSaveFileName={HandleSaveFileName} />
       <div className='w-full h-full flex justify-center ml-16'>
         <DocumentViewer url={document?.url} mime_type={GetFileExtension(document?.mime_type)} />
       </div>
