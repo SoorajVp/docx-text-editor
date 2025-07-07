@@ -29,12 +29,8 @@ const Layout = () => {
         <div className={`h-screen flex flex-col ${(darkMode) && 'dark'}`}>
             <Header />
             <main className="flex-1 overflow-y-auto bg-gradient-to-b from-white to-neutral-300 dark:from-neutral-800 dark:to-neutral-950 ">
-                {
-                    isFetching ?
-                        <Loading /> :
-                        <Outlet />
-                }
-                {/* <Outlet /> */}
+                {isFetching && <Loading />}
+                <Outlet />
             </main>
         </div>
     )

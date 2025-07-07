@@ -2,7 +2,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    document: {}
+    document: {},
+    isLoading: false
 };
 
 const documentSlice = createSlice({
@@ -10,7 +11,6 @@ const documentSlice = createSlice({
     initialState,
     reducers: {
         setDocumentData: (state, action) => {
-            console.log('action.payload', action.payload)
             state.document = action.payload;
         },
        

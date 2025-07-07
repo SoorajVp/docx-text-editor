@@ -11,10 +11,9 @@ import documentService from '../../api/services/document';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-const DetailSidebar = ({ onDelete, onSaveFileName }) => {
+const DetailSidebar = ({ onDelete, onUpdate, onSaveFileName }) => {
 
     const { document } = useSelector(store => store.document)
-    console.log('=================================', document)
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -54,7 +53,7 @@ const DetailSidebar = ({ onDelete, onSaveFileName }) => {
         setShowModal(false);
     };
 
-    const handleSaveFileName = async() => {
+    const handleSaveFileName = async () => {
         // Your custom logic to save the file name
         console.log("Saving:", fileName);
         await onSaveFileName(fileName, document)
@@ -119,7 +118,7 @@ const DetailSidebar = ({ onDelete, onSaveFileName }) => {
                                 {isEditing ? (
                                     <MdOutlineFileDownloadDone onMouseDown={handleSaveClick} size={21} />
                                 ) : (
-                                        <RiEdit2Fill onClick={handleEditClick} size={21} />
+                                    <RiEdit2Fill onClick={handleEditClick} size={21} />
                                 )}
                             </button>
 
@@ -146,7 +145,6 @@ const DetailSidebar = ({ onDelete, onSaveFileName }) => {
                                 ))}
                         </div>
 
-
                         {/* <SidebarItem icon={<FaFile size={20} />} text={document?.file_name} isSidebarOpen={isSidebarOpen} /> */}
                         <SidebarItem icon={<FaSave size={20} />} text={getFileSizeInMB(document?.size)} isSidebarOpen={isSidebarOpen} />
                         <SidebarItem icon={<FaCalendarAlt size={20} />} text={formatDate(document?.createdAt)} isSidebarOpen={isSidebarOpen} />
@@ -154,7 +152,7 @@ const DetailSidebar = ({ onDelete, onSaveFileName }) => {
                         {/* <SidebarItem icon={<IoMdDownload size={20} />} text="Download" isSidebarOpen={isSidebarOpen} isActive /> */}
                         {
                             mode === "edit" ?
-                                <button className="flex items-center gap-3 p-2 text-gray-800 dark:text-gray-300 bg-gray-200 dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-sm w-full" onClick={() => DownloadFile(document?.url, document?.file_name)}>
+                                <button className="flex items-center gap-3 p-2 text-gray-800 dark:text-gray-300 bg-gray-200 dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-sm w-full" onClick={() => onUpdate()}>
                                     <IoIosSave size={20} /> {isSidebarOpen && "Save Changes"}
                                 </button> :
                                 <button className="flex items-center gap-3 p-2 text-gray-800 dark:text-gray-300 bg-gray-200 dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-sm w-full" onClick={() => DownloadFile(document?.url, document?.file_name)}>
@@ -166,11 +164,12 @@ const DetailSidebar = ({ onDelete, onSaveFileName }) => {
                                 <button className="flex items-center gap-3 p-2 text-gray-800 dark:text-gray-300 bg-gray-200 dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-sm w-full" onClick={() => navigate(`/doc/view/${id}`)}>
                                     <IoMdArrowRoundBack size={20} /> {isSidebarOpen && "Exit Editing"}
                                 </button> :
-                                <button className="flex items-center gap-3 p-2 text-gray-800 dark:text-gray-300 bg-gray-200 dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-sm w-full" onClick={() => navigate(`/doc/edit/${id}`)}>
-                                    <MdUpdate size={20} /> {isSidebarOpen && "Update Document"}
-                                </button>
+                                ((GetFileExtension(document?.mime_type) !== "pdf") &&
+                                    <button className="flex items-center gap-3 p-2 text-gray-800 dark:text-gray-300 bg-gray-200 dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-sm w-full" onClick={() => navigate(`/doc/edit/${id}`)}>
+                                        <MdUpdate size={20} /> {isSidebarOpen && "Update Document"}
+                                    </button>)
                         }
-                        
+
                         <button className="flex items-center gap-3 p-2 text-red-600 dark:text-red-400 bg-gray-200 dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-sm w-full" onClick={handleDeleteClick}>
                             <IoMdTrash size={20} /> {isSidebarOpen && "Delete Document"}
                         </button>

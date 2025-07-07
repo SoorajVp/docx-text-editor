@@ -8,6 +8,7 @@ import DocxEditor from '../components/editor/docx/DocxEditor'
 import PptxEditor from '../components/editor/pptx/PptxEditor'
 import { useDispatch } from 'react-redux'
 import { setDocumentData } from '../redux/slice/documentSlice'
+import { setPageLoading } from '../redux/slice/userSlice'
 
 const EditDocument = () => {
     const { id } = useParams()
@@ -22,7 +23,6 @@ const EditDocument = () => {
             setDocument(document);
             setDocumentTextBlocks(textBlocks);
             dispatch(setDocumentData(document));
-
         }
         fetchDocumentById()
     }, [])
@@ -47,10 +47,22 @@ const EditDocument = () => {
         dispatch(setDocumentData(response?.document));
     };
 
+    const handleDocumentUpdate = async () => {
+        console.log('documentTextBlocks', documentTextBlocks)
+        try {
+            dispatch(setPageLoading())
+            const response = await documentService.UpdateDocument({ id, textBlocks: documentTextBlocks })
+            setDocument(response?.document);
+            dispatch(setDocumentData(response?.document));
+        } finally {
+            dispatch(setPageLoading())
+        }
+    }
+
     return (
         <div className='flex h-full'>
             {/* <DocSidebar document={document} /> */}
-            <DetailSidebar onDelete={HandleMoveToBin} onUpdate={() => navigate(`/doc/edit/${id}`)} onSaveFileName={HandleSaveFileName} />
+            <DetailSidebar onDelete={HandleMoveToBin} onUpdate={handleDocumentUpdate} onSaveFileName={HandleSaveFileName} />
             <div className='w-full h-full flex justify-center'>
                 <div className='w-1/2'>
                     <DocumentViewer url={document?.url} mime_type={GetFileExtension(document?.mime_type)} />

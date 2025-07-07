@@ -120,7 +120,6 @@ const GetDocumentTexts = async (req, res, next) => {
 
         res.status(200).json({ textBlocks, document, message: "Text blocks fetched" });
     } catch (error) {
-        console.error("Error:", error);
         next(error);
     }
 };
@@ -130,80 +129,41 @@ const GetDocumentTexts = async (req, res, next) => {
 const UpdateDocument = async (req, res, next) => {
 
     try {
-        const { documentUrl, updatedTextBlocks } = req.body;
+        const { id, textBlocks } = req.body;
+        const document = await Document.findById(id);
 
-        const fileName = helper.GenerateFileName(documentUrl);
+        if (!document) {
+            throw new AppError("Document not found", 404);
+        }
 
-        // Fetch the document
-        const response = await axios.get(documentUrl, { responseType: "arraybuffer" });
-        const originalDoc = Buffer.from(response.data);
+        let updatedFile;
 
-        // Load the DOCX as a ZIP archive
-        const zip = await JSZip.loadAsync(originalDoc);
-        let documentXml = await zip.file("word/document.xml").async("string");
+        switch (document.mime_type) {
+            case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                updatedFile = await helper.UpdateDocxDocument(document.url, textBlocks);
+                break;
 
-        // Parse the XML document
-        const parser = new DOMParser({ preserveWhiteSpace: true });
-        const serializer = new XMLSerializer();
-        const doc = parser.parseFromString(documentXml, "application/xml");
+            case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+                updatedFile = await helper.UpdatePptxDocument(document.url, textBlocks);
+                break;
 
-        // Get all <w:p> (paragraph) elements
-        const paragraphElements = Array.from(doc.getElementsByTagName("w:p"));
+            default:
+                throw new AppError("Unknown Document Type", 400);
+        }
 
-        // Update text blocks based on IDs
-        updatedTextBlocks.forEach(({ id, text }) => {
-            // Extract paragraph and text indices from the ID
-            const [paraIndex, textIndex] = id
-                .replace("para-", "")
-                .split("-text-")
-                .map(Number);
+        const uploadResult = await helper.cloudinaryUpload(updatedFile, document?.file_name, "updated_documents")
 
-            if (
-                paraIndex >= 0 && paraIndex < paragraphElements.length // Valid paragraph index
-            ) {
-                const para = paragraphElements[paraIndex];
-                const textElements = Array.from(para.getElementsByTagName("w:t"));
+        const updatedDocument = await Document.findByIdAndUpdate(
+            id,
+            {
+                $set: { url: uploadResult?.secure_url },
+                $push: { updated_urls: uploadResult?.secure_url },
+            },
+            { new: true } // return the updated document (optional)
+        );
 
-                if (
-                    textIndex >= 0 && textIndex < textElements.length // Valid text element index
-                ) {
-                    const textElement = textElements[textIndex];
+        res.status(200).json({ document: updatedDocument, message: "Document Updated Successfully", toast: true });
 
-                    // Update the text content
-                    while (textElement.firstChild) {
-                        textElement.removeChild(textElement.firstChild); // Clear old text content
-                    }
-                    textElement.appendChild(doc.createTextNode(text || "")); // Set new text content
-                }
-            }
-        });
-
-        // Serialize the updated document back to XML
-        documentXml = serializer.serializeToString(doc);
-
-        // Update the ZIP file with the modified document.xml
-        zip.file("word/document.xml", documentXml);
-        const updatedDoc = await zip.generateAsync({
-            type: "nodebuffer",
-            compression: "DEFLATE",
-            compressionOptions: { level: 6 },
-        });
-
-        // Upload the updated document to Cloudinary
-        const uploadResult = await new Promise((resolve, reject) => {
-            cloudinary.uploader.upload_stream(
-                { resource_type: "auto", public_id: fileName },
-                (error, result) => (error ? reject(error) : resolve(result))
-            ).end(updatedDoc);
-        });
-
-        // Return the URL of the uploaded document
-        res.status(201).json({
-            message: "Document updated successfully",
-            updatedUrl: uploadResult.secure_url,
-            size: updatedDoc.length,
-            updatedAt: new Date().toISOString(), toast: true
-        });
     } catch (error) {
         next(error)
     }
@@ -230,8 +190,8 @@ const SoftDeleteDocument = async (req, res, next) => {
 };
 
 const RestoreDocuments = async (req, res, next) => {
-    const { ids } = req.body; // Expecting an array of document IDs in the request body
-    console.log(req.body)
+    const { ids } = req.body;
+
     try {
         const result = await Document.updateMany(
             { _id: { $in: ids } }, // Match documents with the given IDs
@@ -268,8 +228,7 @@ const GetDeletedDocumentList = async (req, res, next) => {
 }
 
 const DeleteDocuments = async (req, res, next) => {
-    const { ids } = req.body; // Expecting an array of document IDs
-    console.log('req.body', req.body)
+    const { ids } = req.body; 
     try {
 
         const result = await Document.deleteMany({ _id: { $in: ids } });

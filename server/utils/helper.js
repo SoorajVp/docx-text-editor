@@ -1,7 +1,7 @@
 import axios from "axios";
 import JSZip from "jszip";
 import path from "path";
-import { DOMParser } from "@xmldom/xmldom";
+import { DOMParser, XMLSerializer } from "@xmldom/xmldom";
 import cloudinary from "../config/cloudinary.js";
 
 const ConvertDocToXML = async (docUrl) => {
@@ -16,7 +16,6 @@ const ConvertDocToXML = async (docUrl) => {
 }
 
 const cloudinaryUpload = async (fileBuffer, fileName, folder) => {
-    console.log("file mime type => ", fileName)
 
     if (fileName.toLowerCase().endsWith(".pdf")) {
         fileName = path.basename(fileName, path.extname(fileName));
@@ -118,7 +117,6 @@ const DocxTextBlocksFromUrl = async (fileUrl) => {
                 });
 
                 if (textContent.includes('.')) {
-                    console.log('text -', textContent)
                     sentId++;
                 }
             });
@@ -130,6 +128,140 @@ const DocxTextBlocksFromUrl = async (fileUrl) => {
     }
 };
 
+const UpdateDocxDocument = async (fileUrl, updatedTextBlocks) => {
+    try {
+        const bufferData = await GetFileBufferFromUrl(fileUrl);
+        const originalDoc = Buffer.from(bufferData);
+
+        // Load the DOCX as a ZIP archive
+        const zip = await JSZip.loadAsync(originalDoc);
+        let documentXml = await zip.file("word/document.xml").async("string");
+
+        // Parse the XML document to modify the text content
+        const parser = new DOMParser({ preserveWhiteSpace: true });
+        const serializer = new XMLSerializer();
+        const doc = parser.parseFromString(documentXml, "application/xml");
+
+
+        const paragraphElements = Array.from(doc.getElementsByTagName("w:p"));
+
+        // Update text blocks based on IDs
+        updatedTextBlocks.forEach(({ id, text }) => {
+            // Extract paragraph and text indices from the ID
+            const [paraIndex, textIndex] = id
+                .replace("para-", "")
+                .split("-text-")
+                .map(Number);
+
+            if (
+                paraIndex >= 0 && paraIndex < paragraphElements.length // Valid paragraph index
+            ) {
+                const para = paragraphElements[paraIndex];
+                const textElements = Array.from(para.getElementsByTagName("w:t"));
+
+                if (
+                    textIndex >= 0 && textIndex < textElements.length // Valid text element index
+                ) {
+                    const textElement = textElements[textIndex];
+
+                    // Update the text content
+                    while (textElement.firstChild) {
+                        textElement.removeChild(textElement.firstChild); // Clear old text content
+                    }
+                    textElement.appendChild(doc.createTextNode(text || "")); // Set new text content
+                }
+            }
+        });
+
+        // Serialize the updated document back to XML
+        documentXml = serializer.serializeToString(doc);
+
+        // Update the ZIP file with the modified document.xml
+        zip.file("word/document.xml", documentXml);
+        const updatedDoc = await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE", compressionOptions: { level: 6 } });
+        return updatedDoc
+
+    } catch (error) {
+        throw new Error(`Error updating document: ${error.message}`);
+
+    }
+}
+
+const UpdatePptxDocument = async (fileUrl, updatedTextBlocks) => {
+    try {
+        const bufferData = await GetFileBufferFromUrl(fileUrl);
+        const originalPptx = Buffer.from(bufferData);
+
+        // Load the PPTX as a ZIP archive
+        const zip = await JSZip.loadAsync(originalPptx);
+
+        const textBlocksMap = new Map();
+        updatedTextBlocks.forEach(block => {
+            textBlocksMap.set(block.id, block);
+        });
+
+        // Get all slide files
+        const slideFiles = Object.keys(zip.files).filter(file =>
+            file.startsWith("ppt/slides/slide") && file.endsWith(".xml")
+        );
+
+        // Process each slide file
+        for (const slideFile of slideFiles) {
+            let slideXml = await zip.file(slideFile).async("string");
+            const parser = new DOMParser({ preserveWhiteSpace: true });
+            const serializer = new XMLSerializer();
+            const doc = parser.parseFromString(slideXml, "application/xml");
+
+            // Get all shapes in the slide
+            const shapes = Array.from(doc.getElementsByTagName("p:sp"));
+            let changesMade = false;
+
+            for (const shape of shapes) {
+                const cNvPr = Array.from(shape.getElementsByTagName("p:cNvPr"))[0];
+                const shapeId = cNvPr?.getAttribute("id") || `shape-${shapes.indexOf(shape)}`;
+
+                const paragraphs = Array.from(shape.getElementsByTagName("a:p"));
+
+                for (let paraIndex = 0; paraIndex < paragraphs.length; paraIndex++) {
+                    const para = paragraphs[paraIndex];
+                    const textElements = Array.from(para.getElementsByTagName("a:t"));
+
+                    for (let textIndex = 0; textIndex < textElements.length; textIndex++) {
+                        const textElement = textElements[textIndex];
+                        const blockId = `slide-${slideFile}-shape-${shapeId}-para-${paraIndex}-text-${textIndex}`;
+
+                        if (textBlocksMap.has(blockId)) {
+                            const updatedBlock = textBlocksMap.get(blockId);
+                            if (textElement.textContent !== updatedBlock.text) {
+                                textElement.textContent = updatedBlock.text || "";
+                                changesMade = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (changesMade) {
+                // Serialize the updated slide XML back to a string
+                slideXml = serializer.serializeToString(doc);
+                // Update the ZIP file with the modified slide XML
+                zip.file(slideFile, slideXml);
+            }
+        }
+
+        // Generate the updated PPTX file
+        const updatedPptx = await zip.generateAsync({
+            type: "nodebuffer",
+            compression: "DEFLATE",
+            compressionOptions: { level: 6 },
+        });
+        return updatedPptx
+
+    } catch (error) {
+        throw new Error(`Error updating document: ${error.message}`);
+
+    }
+}
 
 const PptxTextBlocksFromUrl = async (fileUrl) => {
     try {
@@ -183,7 +315,6 @@ const PptxTextBlocksFromUrl = async (fileUrl) => {
                 });
             });
         }
-        console.log('textBlocks', textBlocks)
         return textBlocks;
     } catch (err) {
         throw new Error(`Error parsing document: ${err.message}`);
@@ -191,4 +322,12 @@ const PptxTextBlocksFromUrl = async (fileUrl) => {
 };
 
 
-export default { GenerateFileName, cloudinaryUpload, GetFileExtFromMimeType, DocxTextBlocksFromUrl, PptxTextBlocksFromUrl }
+export default { 
+    GenerateFileName, 
+    cloudinaryUpload, 
+    GetFileExtFromMimeType, 
+    DocxTextBlocksFromUrl, 
+    UpdateDocxDocument, 
+    PptxTextBlocksFromUrl,
+    UpdatePptxDocument
+}
