@@ -19,10 +19,15 @@ const EditDocument = () => {
 
     useEffect(() => {
         const fetchDocumentById = async () => {
-            const { document, textBlocks } = await documentService.GetDocumentTextBlocks(id)
-            setDocument(document);
-            setDocumentTextBlocks(textBlocks);
-            dispatch(setDocumentData(document));
+            try {
+                dispatch(setPageLoading())
+                const { document, textBlocks } = await documentService.GetDocumentTextBlocks(id)
+                setDocument(document);
+                setDocumentTextBlocks(textBlocks);
+                dispatch(setDocumentData(document));
+            } finally {
+                dispatch(setPageLoading())
+            }
         }
         fetchDocumentById()
     }, [])
@@ -48,7 +53,6 @@ const EditDocument = () => {
     };
 
     const handleDocumentUpdate = async () => {
-        console.log('documentTextBlocks', documentTextBlocks)
         try {
             dispatch(setPageLoading())
             const response = await documentService.UpdateDocument({ id, textBlocks: documentTextBlocks })
@@ -63,11 +67,11 @@ const EditDocument = () => {
         <div className='flex h-full'>
             {/* <DocSidebar document={document} /> */}
             <DetailSidebar onDelete={HandleMoveToBin} onUpdate={handleDocumentUpdate} onSaveFileName={HandleSaveFileName} />
-            <div className='w-full h-full flex justify-center'>
-                <div className='w-1/2'>
+            <div className='w-full h-full flex justify-center ml-16 md:ml-0'>
+                <div className='w-1/2 hidden md:block'>
                     <DocumentViewer url={document?.url} mime_type={GetFileExtension(document?.mime_type)} />
                 </div>
-                <div className='w-1/2'>
+                <div className='md:w-1/2 w-full'>
                     {
                         GetFileExtension(document?.mime_type) === "docx" &&
                         <DocxEditor textBlocks={documentTextBlocks} setTextBlocks={setDocumentTextBlocks} />

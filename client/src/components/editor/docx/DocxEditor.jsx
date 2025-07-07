@@ -3,37 +3,47 @@ import DocxTextBlock from './DocxTextBlock';
 
 const DocxEditor = ({ textBlocks, setTextBlocks }) => {
     const groupSentences = () => {
-        const groups = [];
-        let currentGroup = [];
-        let currentParaId = null;
-        let currentSentId = null;
+        // First, group by paragraph
+        const paragraphs = {};
 
-        // Sort blocks by paraId and sentId to ensure proper grouping
-        const sortedBlocks = [...textBlocks].sort((a, b) => {
-            if (a.paraId === b.paraId) {
-                return a.sentId - b.sentId;
+        // Organize blocks by paragraph
+        textBlocks.forEach(block => {
+            if (!paragraphs[block.paraId]) {
+                paragraphs[block.paraId] = {};
             }
-            return a.paraId.localeCompare(b.paraId);
+
+            if (!paragraphs[block.paraId][block.sentId]) {
+                paragraphs[block.paraId][block.sentId] = [];
+            }
+
+            paragraphs[block.paraId][block.sentId].push(block);
         });
 
-        for (const block of sortedBlocks) {
-            if (block.paraId !== currentParaId || block.sentId !== currentSentId) {
-                if (currentGroup.length > 0) {
-                    groups.push(currentGroup);
+        // Then sort paragraphs by their order in the original textBlocks
+        const paraOrder = [...new Set(textBlocks.map(block => block.paraId))];
+
+        // For each paragraph, sort sentences and then sort text blocks within each sentence
+        const result = [];
+
+        paraOrder.forEach(paraId => {
+            const sentences = paragraphs[paraId];
+            const sentIds = Object.keys(sentences).sort((a, b) => a - b);
+
+            sentIds.forEach(sentId => {
+                // Sort text blocks within a sentence by their appearance in original array
+                const blocksInSentence = [...sentences[sentId]].sort((a, b) => {
+                    const indexA = textBlocks.findIndex(block => block.id === a.id);
+                    const indexB = textBlocks.findIndex(block => block.id === b.id);
+                    return indexA - indexB;
+                });
+
+                if (blocksInSentence.length > 0) {
+                    result.push(blocksInSentence);
                 }
-                currentGroup = [block];
-                currentParaId = block.paraId;
-                currentSentId = block.sentId;
-            } else {
-                currentGroup.push(block);
-            }
-        }
+            });
+        });
 
-        if (currentGroup.length > 0) {
-            groups.push(currentGroup);
-        }
-
-        return groups;
+        return result;
     };
 
     const groupedSentences = useMemo(() => groupSentences(), [textBlocks]);
@@ -58,7 +68,7 @@ const DocxEditor = ({ textBlocks, setTextBlocks }) => {
             {groupedSentences.map((blockGroup, index) => (
                 blockGroup.length > 0 ? (
                     <DocxTextBlock
-                        key={`block-${blockGroup[0].id}`}
+                        key={`block-${blockGroup[0].paraId}-${blockGroup[0].sentId}`}
                         index={index}
                         onUpdate={handleTextBlockUpdate}
                         block={blockGroup}

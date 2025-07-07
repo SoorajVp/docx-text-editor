@@ -61,7 +61,7 @@ const HomePage = () => {
 
 
   return (
-    <div className="max-w-5xl mx-auto h-[90vh] pt-2 flex flex-col">
+    <div className="max-w-5xl mx-auto h-[91vh] p-2 flex flex-col">
       <div className="z-10">
         <div className="flex justify-between items-center">
           {/* Search Input */}

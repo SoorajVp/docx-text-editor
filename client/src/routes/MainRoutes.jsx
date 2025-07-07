@@ -12,6 +12,7 @@ import ProfilePage from '../pages/ProfilePage';
 import Loading from '../components/Loading';
 import DocumentPage from '../pages/DocumentPage';
 import EditDocument from '../pages/EditDocument';
+import NotFound from '../components/error/NotFound';
 
 
 function MainRoutes() {
@@ -31,12 +32,13 @@ function MainRoutes() {
                 <Route path="/doc/view/:id" element={<DetailsPage />} />
                 <Route path="/doc/edit/:id" element={<EditDocument />} />
 
-                <Route path="/bin-files" element={<BinFilesPage />} />
+                <Route path="/archive" element={<BinFilesPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
 
-                <Route path="/Loading" element={<Loading />} />
 
             </Route>
+            <Route path="*" element={<NotFound />} />
+
         </Routes>
     );
 }

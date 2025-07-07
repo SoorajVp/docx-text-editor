@@ -2,7 +2,7 @@ import { googleLogout } from "@react-oauth/google";
 import React, { useEffect, useState } from "react";
 import { IoLogOutOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { setPageLoading, setUserDetails, setUserLoggout, toggleDarkMode } from "../redux/slice/userSlice";
 import userService from "../api/services/user";
 import ConfirmationModal from "./modals/AlertModal";
@@ -181,9 +181,14 @@ const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
                                 <button onClick={handleSubmit} className="w-full py-1 bg-orange-500 hover:bg-orange-500 text-white transition duration-300 ease-in-out">Save Changes</button>
                             </div>
                         ) : (
-                            <p onClick={() => setIsEditing(true)} className="text-orange-500 hover:text-orange-600 cursor-pointer mt-3 transition duration-300 ease-in-out">
-                                Edit account information?
-                            </p>
+                            <>
+                                <p onClick={() => setIsEditing(true)} className="text-orange-500 hover:text-orange-600 cursor-pointer my-3 transition duration-300 ease-in-out">
+                                    Edit account information?
+                                </p>
+                                    <Link to="/archive" className="text-red-500 hover:text-red-600 cursor-pointer transition duration-300 ease-in-out">
+                                    Manage Recently Deleted Files
+                                </Link>
+                            </>
                         )}
 
                     </div>
@@ -205,7 +210,7 @@ const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
                             <button className="w-full border border-neutral-500 mt-2 dark:text-white text-sm py-0.5" onClick={() => document.getElementById("fileInput").click()}>
                                 Change Picture
                             </button> :
-                            <button onClick={() =>setShowModal(true)} className="flex items-center gap-2 justify-center w-full border border-red-500 mt-2 text-red-700 dark:text-red-500 bg-neutral-100 dark:bg-neutral-900 py-1 font-semibold text-base">
+                            <button onClick={() => setShowModal(true)} className="flex items-center gap-2 justify-center w-full border border-red-500 mt-2 text-red-700 dark:text-red-500 bg-neutral-100 dark:bg-neutral-900 py-1 font-semibold text-base">
                                 Logout <IoLogOutOutline size={20} />
                             </button>
                         }
