@@ -8,8 +8,8 @@ const documentService = {
         return response.data
     },
     
-    GetUserDocuments: async (value) => {
-        const response = await apiClient.get(`/document/list?search=${value}`);
+    GetUserDocuments: async (search, sort) => {
+        const response = await apiClient.get(`/document/list?search=${search}&sort=${sort}`);
         return response.data
     },
 

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 
 const DocumentList = ({ documents, listType, loading }) => {
     return (
-        <div className="flex-1 overflow-y-auto mt-3 no-scrollbar" >
+        <div className="flex-1 overflow-y-auto mt-2 no-scrollbar" >
             {
                 listType === "row" ?
                     <ul className="space-y-2">

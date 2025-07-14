@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import documentService from '../api/services/document'
 import DocumentList from '../components/document/DocumentList'
-import { MdViewList } from 'react-icons/md'
+import { MdOutlineSort, MdViewList } from 'react-icons/md'
 import { PiGridNineFill } from "react-icons/pi"
 import { CiSearch } from "react-icons/ci"
 import { useNavigate } from 'react-router-dom'
@@ -12,10 +12,11 @@ const HomePage = () => {
   const [listType, setListType] = useState("row")
   const [loading, setLoading] = useState(true)
   const [Search, setSearch] = useState("")
+  const [sort, setSort] = useState("desc")
   const [debouncedTerm, setDebouncedTerm] = useState("")
   const [showDropdown, setShowDropdown] = useState(false)
   const navigate = useNavigate()
-  
+
   // Reference for dropdown
   const dropdownRef = useRef(null)
 
@@ -33,12 +34,12 @@ const HomePage = () => {
 
   useEffect(() => {
     fetchDocuments()
-  }, [])
+  }, [sort])
 
   const fetchDocuments = async () => {
     try {
       setLoading(true)
-      const { documents } = await documentService.GetUserDocuments(Search)
+      const { documents } = await documentService.GetUserDocuments(Search, sort)
       setDocumentList(documents)
     } finally {
       setLoading(false)
@@ -60,6 +61,7 @@ const HomePage = () => {
   }, [])
 
 
+  console.log('sort', sort)
   return (
     <div className="max-w-5xl mx-auto h-[91vh] p-2 flex flex-col">
       <div className="z-10">
@@ -120,9 +122,14 @@ const HomePage = () => {
         </div>
       </div>
 
-      <p className="text-neutral-700 dark:text-neutral-300 text-sm p-1">
-        {loading ? `Loading documents...` : `Showing ${documentList?.length} documents`}
-      </p>
+      <div className='flex justify-between items-center mt-1'>
+        <p className="text-neutral-700 dark:text-neutral-300 text-xs p-1">
+          {loading ? `Loading documents...` : `Showing ${documentList?.length} documents`}
+        </p>
+        <p onClick={() => setSort( sort === "desc" ? "asc" : "desc")} className='flex gap-1 items-center cursor-pointer text-neutral-700 dark:text-neutral-300 text-xs '>Date Modified
+          <MdOutlineSort />
+        </p>
+      </div>
 
       <DocumentList documents={documentList} loading={loading} listType={listType} />
     </div>

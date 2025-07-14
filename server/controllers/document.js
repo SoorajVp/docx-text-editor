@@ -64,8 +64,8 @@ const UpdateFileNameById = async (req, res, next) => {
 
 const GetDocumentList = async (req, res, next) => {
     try {
-        const _id = req.userId
-        const { search } = req.query
+        const _id = req.userId;
+        const { search, sort = 'desc' } = req.query; // Default to descending
 
         let filter = {
             user_id: _id,
@@ -79,13 +79,15 @@ const GetDocumentList = async (req, res, next) => {
             ];
         }
 
-        // Fetch filtered documents
-        let documents = await Document.find(filter).sort({ updatedAt: -1 })
-        res.status(200).json({ message: `Document list fetched`, documents })
+        // Fetch filtered and sorted documents
+        const documents = await Document.find(filter).sort({ updatedAt: sort === 'asc' ? 1 : -1 });
+
+        res.status(200).json({ message: `Document list fetched`, documents });
     } catch (error) {
-        next(error)
+        next(error);
     }
-}
+};
+
 
 const GetDocumentTexts = async (req, res, next) => {
     try {
