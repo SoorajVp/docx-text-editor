@@ -20,13 +20,13 @@ const EditDocument = () => {
     useEffect(() => {
         const fetchDocumentById = async () => {
             try {
-                dispatch(setPageLoading())
+                dispatch(setPageLoading(true))
                 const { document, textBlocks } = await documentService.GetDocumentTextBlocks(id)
                 setDocument(document);
                 setDocumentTextBlocks(textBlocks);
                 dispatch(setDocumentData(document));
             } finally {
-                dispatch(setPageLoading())
+                dispatch(setPageLoading(false))
             }
         }
         fetchDocumentById()
@@ -54,12 +54,12 @@ const EditDocument = () => {
 
     const handleDocumentUpdate = async () => {
         try {
-            dispatch(setPageLoading())
+            dispatch(setPageLoading(true))
             const response = await documentService.UpdateDocument({ id, textBlocks: documentTextBlocks })
             setDocument(response?.document);
             dispatch(setDocumentData(response?.document));
         } finally {
-            dispatch(setPageLoading())
+            dispatch(setPageLoading(false))
         }
     }
 

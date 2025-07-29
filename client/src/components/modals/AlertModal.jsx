@@ -6,6 +6,7 @@ const ConfirmationModal = ({ action, onConfirm, onCancel }) => {
             <div className="bg-white dark:bg-neutral-800 p-6 rounded-sm shadow-2xl max-w-sm w-full">
                 <h2 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
                     {action === 'restore' && 'Restore File'}
+                    {action === 'discard' && 'Discard Changes'}
                     {action === 'bin' && 'Move File to Bin'}
                     {action === 'delete' && 'Permanently Delete File'}
                     {action === 'delete-all' && 'Delete All Files'}
@@ -17,6 +18,7 @@ const ConfirmationModal = ({ action, onConfirm, onCancel }) => {
                 </h2>
                 <p className="text-neutral-700 dark:text-neutral-300 mb-6">
                     {action === 'restore' && 'Restore this file? It will go back to your documents.'}
+                    {action === 'discard' && 'Discard Changes'}
                     {action === 'bin' && 'Move this file to the bin? You can restore it later.'}
                     {action === 'delete' && 'Permanently delete this file? This cannot be undone.'}
                     {action === 'delete-all' && 'Are you sure you want to delete all files in the bin? This action cannot be undone.'}

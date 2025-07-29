@@ -6,6 +6,7 @@ import "./Document.css";
 const DocumentViewer = ({ file, url }) => {
     return (
         <DocViewer
+            key={url}
             documents={[file ? { file } : { uri: url }]}
             pluginRenderers={DocViewerRenderers}
             style={{ height: '100%' }}

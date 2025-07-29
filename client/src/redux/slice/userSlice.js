@@ -11,8 +11,8 @@ const userSlice = createSlice({
     initialState,
     reducers: {
 
-        setPageLoading: (state) => {
-            state.isFetching = !state.isFetching
+        setPageLoading: (state, action) => {
+            state.isFetching = action.payload
         },
 
         setUserDetails: (state, action) => {

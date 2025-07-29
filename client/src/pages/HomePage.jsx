@@ -63,7 +63,7 @@ const HomePage = () => {
 
   console.log('sort', sort)
   return (
-    <div className="max-w-5xl mx-auto h-[91vh] p-2 flex flex-col">
+    <div className="max-w-5xl mx-auto h-[91vh] px-2 pt-2 flex flex-col">
       <div className="z-10">
         <div className="flex justify-between items-center">
           {/* Search Input */}

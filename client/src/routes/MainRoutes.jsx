@@ -5,7 +5,6 @@ import LandingPage from '../components/LandingPage';
 import Layout from '../components/layout/Layout';
 import HomePage from '../pages/HomePage';
 import CreateDocument from '../components/CreateDocument';
-import UploadPage from '../pages/UploadPage';
 import DetailsPage from '../pages/DetailsPage';
 import BinFilesPage from '../pages/BinFilesPage';
 import ProfilePage from '../pages/ProfilePage';
@@ -13,6 +12,7 @@ import Loading from '../components/Loading';
 import DocumentPage from '../pages/DocumentPage';
 import EditDocument from '../pages/EditDocument';
 import NotFound from '../components/error/NotFound';
+import UploadDocument from '../pages/UploadDocument';
 
 
 function MainRoutes() {
@@ -28,7 +28,7 @@ function MainRoutes() {
                 <Route path="" element={<HomePage />} />
                 {/* <Route path="/edit" element={<EditingPage />} /> */}
                 <Route path="/create" element={<CreateDocument />} />
-                <Route path="/upload" element={<UploadPage />} />
+                <Route path="/upload" element={<UploadDocument />} />
                 <Route path="/doc/view/:id" element={<DetailsPage />} />
                 <Route path="/doc/edit/:id" element={<EditDocument />} />
 

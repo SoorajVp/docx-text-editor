@@ -64,12 +64,14 @@ const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
         }
 
         try {
-            dispatch(setPageLoading())
+            dispatch(setPageLoading(true))
             const response = await userService.UpdateUserDetails(formData);
             dispatch(setUserDetails({ user: response.user }));
             setIsEditing(false);
         } catch (error) {
             console.error("Error updating user details:", error);
+        } finally {
+            dispatch(setPageLoading(false))
         }
     };
 
