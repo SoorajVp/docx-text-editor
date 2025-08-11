@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 import { FcGoogle } from "react-icons/fc";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import authService from "../api/services/auth";
 import { useDispatch } from "react-redux";
 import { setUserDetails, setUserLoggout } from "../redux/slice/userSlice";
@@ -14,7 +13,7 @@ const LandingPage = () => {
   useEffect(() => {
     const token = localStorage.getItem("auth_token")
     if(token) {
-      navigate("/")
+      navigate("/files")
     }
   } ,[])
 
@@ -23,11 +22,10 @@ const LandingPage = () => {
     onSuccess: async(codeResponse) => {
       const { user, token } = await authService.GoogleLogin(codeResponse.access_token)
       dispatch(setUserDetails({ user, token }))
-      navigate("/")
+      navigate("/files")
     },
     onError: (error) => console.log("Login Failed:", error),
   });
-
 
 
   return (
@@ -55,10 +53,15 @@ const LandingPage = () => {
               work anytime, anywhere, with secure Google authentication.
             </p>
 
-            <div className="mx-auto mb-2 mt-8">
+            <div className="mx-auto mb-2 mt-8 space-y-4">
+              <Link to="/get-started"
+                className="mx-auto w-fit flex items-center gap-2 border border-black hover:border-orange-500 px-8 py-2 font-semibold text-white transition-all duration-300 ease-in-out hover:shadow-lg rounded-full hover:bg-orange-600 bg-gray-800"
+              >
+                Get Started
+              </Link>
               <button
                 onClick={() => login()}
-                className="mx-auto flex items-center gap-2 border border-orange-500 px-6 py-2 font-semibold text-orange-700 transition-all duration-300 ease-in-out hover:rounded-full hover:bg-gray-100"
+                className="mx-auto flex items-center gap-2 border border-orange-500 px-6 py-2 font-semibold text-orange-700 transition-all duration-300 ease-in-out hover:rounded-full hover:shadow-lg hover:bg-gray-100"
               >
                 <span>
                   <FcGoogle size={25} />
@@ -66,9 +69,7 @@ const LandingPage = () => {
                 Sign in with Google
               </button>
             </div>
-            <a href="#" className="mt-4 text-sm font-semibold text-gray-900">
-              Learn more <span aria-hidden="true">→</span>
-            </a>
+           
           </div>
 
         </div>

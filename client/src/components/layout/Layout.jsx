@@ -3,9 +3,7 @@ import Header from './Header'
 import { Outlet } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { setUserDetails } from '../../redux/slice/userSlice'
-import axios from 'axios'
-import authService from '../../api/services/auth'
-import Loading from '../Loading'
+import Loading from '../loading/Loading'
 import userService from '../../api/services/user'
 
 const Layout = () => {

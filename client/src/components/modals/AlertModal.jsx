@@ -18,7 +18,7 @@ const ConfirmationModal = ({ action, onConfirm, onCancel }) => {
                 </h2>
                 <p className="text-neutral-700 dark:text-neutral-300 mb-6">
                     {action === 'restore' && 'Restore this file? It will go back to your documents.'}
-                    {action === 'discard' && 'Discard Changes'}
+                    {action === 'discard' && 'Are you sure you want to exit? Unsaved changes will be lost.'}
                     {action === 'bin' && 'Move this file to the bin? You can restore it later.'}
                     {action === 'delete' && 'Permanently delete this file? This cannot be undone.'}
                     {action === 'delete-all' && 'Are you sure you want to delete all files in the bin? This action cannot be undone.'}
@@ -33,13 +33,14 @@ const ConfirmationModal = ({ action, onConfirm, onCancel }) => {
                     <button className={`${action === "delete" || action === "delete-all" || action === "delete-selected" || action === "logout" ? 'bg-red-600' : 'bg-orange-600'} px-4 py-1.5 text-white`} onClick={onConfirm}>
                         {action === 'delete' ? 'Delete' :
                             action === 'restore' ? 'Restore' :
-                                action === 'bin' ? 'Move to Bin' :
-                                    action === 'delete-all' ? 'Delete All' :
-                                        action === 'restore-all' ? 'Restore All' :
-                                            action === 'restore-selected' ? 'Restore' :
-                                                action === 'delete-selected' ? 'Delete' :
-                                                    action === 'logout' ? 'Confirm' :
-                                                        'Move'}
+                                action === 'discard' ? 'Discard' :
+                                    action === 'bin' ? 'Move to Bin' :
+                                        action === 'delete-all' ? 'Delete All' :
+                                            action === 'restore-all' ? 'Restore All' :
+                                                action === 'restore-selected' ? 'Restore' :
+                                                    action === 'delete-selected' ? 'Delete' :
+                                                        action === 'logout' ? 'Confirm' :
+                                                            'Move'}
                     </button>
                 </div>
             </div>
