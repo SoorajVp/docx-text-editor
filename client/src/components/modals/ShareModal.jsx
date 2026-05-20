@@ -1,199 +1,290 @@
 import React, { useState, useRef, useEffect } from "react";
 import { CiSearch } from "react-icons/ci";
+import { IoClose, IoLinkOutline, IoEarthOutline, IoLockClosedOutline, IoCheckmark } from "react-icons/io5";
+import { MdContentCopy } from "react-icons/md";
+import userService from "../../api/services/user";
 
-const ShareModal = ({ onClose, onShare, searchUsers }) => {
+const ShareModal = ({ onClose, onShare, documentId }) => {
     const [query, setQuery] = useState("");
     const [results, setResults] = useState([]);
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [linkAccess, setLinkAccess] = useState("restricted"); // "restricted" | "anyone"
+    const [permission, setPermission] = useState("view");        // shared for both invite & link
+    const [copied, setCopied] = useState(false);
 
     const dropdownRef = useRef(null);
+    const debounceRef = useRef(null);
+    const documentLink = `${window.location.origin}/doc/view/${documentId}`;
 
-    // 🔍 Search Users
-    const handleSearch = async (value) => {
-        setQuery(value);
-
-        if (!value.trim()) {
-            setResults([]);
-            return;
-        }
-
+    /* ── Search ── */
+    const fetchUsers = async (value) => {
         setLoading(true);
         try {
-            const res = await searchUsers(value);
-            setResults(res);
-        } catch (err) {
-            console.error(err);
+            const res = await userService.GetUserList(value);
+            setResults(res?.users || []);
+        } catch {
+            setResults([]);
         }
         setLoading(false);
     };
 
-    // ➕ Add user
+    const handleSearch = (value) => {
+        setQuery(value);
+        clearTimeout(debounceRef.current);
+        if (!value.trim()) { setResults([]); setLoading(false); return; }
+        setLoading(true);
+        debounceRef.current = setTimeout(() => fetchUsers(value), 400);
+    };
+
+    useEffect(() => () => clearTimeout(debounceRef.current), []);
+
+    /* ── Users ── */
     const addUser = (user) => {
         if (selectedUsers.find((u) => u._id === user._id)) return;
-
-        setSelectedUsers((prev) => [
-            ...prev,
-            { ...user, permission: "read" },
-        ]);
+        setSelectedUsers((prev) => [...prev, user]);
         setQuery("");
         setResults([]);
     };
 
-    // ❌ Remove user
-    const removeUser = (id) => {
-        setSelectedUsers((prev) => prev.filter((u) => u._id !== id));
+    const removeUser = (id) => setSelectedUsers((prev) => prev.filter((u) => u._id !== id));
+
+    /* ── Copy link ── */
+    const handleCopyLink = () => {
+        navigator.clipboard.writeText(documentLink).then(() => {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        });
     };
 
-    // 🔄 Change permission
-    const updatePermission = (id, permission) => {
-        setSelectedUsers((prev) =>
-            prev.map((u) =>
-                u._id === id ? { ...u, permission } : u
-            )
-        );
-    };
-
-    // 🚀 Submit
+    /* ── Submit ── */
     const handleSubmit = () => {
-        onShare(selectedUsers);
+        onShare?.({ users: selectedUsers.map((u) => ({ ...u, permission })), linkAccess, permission });
+        onClose();
     };
 
-    // 📌 Close dropdown on outside click
+    /* ── Outside click ── */
     useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        const handler = (e) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target))
                 setResults([]);
-            }
         };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
+        document.addEventListener("mousedown", handler);
+        return () => document.removeEventListener("mousedown", handler);
     }, []);
 
+    /* ── Avatar ── */
+    const Avatar = ({ name, picture }) => {
+        const [imgError, setImgError] = useState(false);
+        return picture && !imgError
+            ? <img src={picture} alt={name} onError={() => setImgError(true)} className="w-6 h-6 rounded-full object-cover flex-shrink-0" />
+            : <div className="w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-900/50 flex items-center justify-center text-orange-600 dark:text-orange-300 text-xs font-semibold flex-shrink-0">
+                {name?.[0]?.toUpperCase() ?? "?"}
+              </div>;
+    };
+
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div className="bg-white dark:bg-neutral-900 p-6 shadow-2xl w-full max-w-md">
+        <div
+            className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4"
+            onClick={(e) => e.target === e.currentTarget && onClose()}
+        >
+            <div className="bg-white dark:bg-neutral-900 rounded shadow-2xl w-full max-w-lg border border-gray-200 dark:border-neutral-700 overflow-hidden">
 
-                {/* Header */}
-                <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-                    Share Document
-                </h2>
+                {/* ── Header ── */}
+                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-neutral-800">
+                    <h2 className="text-base font-semibold text-gray-900 dark:text-white">Share document</h2>
+                    <button
+                        onClick={onClose}
+                        className="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-neutral-800 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition"
+                    >
+                        <IoClose size={18} />
+                    </button>
+                </div>
 
-                {/* 🔍 Search */}
-                <div className="relative" ref={dropdownRef}>
-                    <CiSearch
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
-                        size={20}
-                    />
+                <div className="px-6 py-5 space-y-4">
 
-                    <input
-                        type="text"
-                        value={query}
-                        onChange={(e) => handleSearch(e.target.value)}
-                        placeholder="Search users..."
-                        className="w-full pl-10 pr-3 py-1.5 text-sm
-            bg-white dark:bg-neutral-900
-            text-gray-900 dark:text-neutral-200
-            border border-gray-300 dark:border-neutral-700
-            focus:border-orange-500 dark:focus:border-orange-400
-            focus:ring-1 focus:ring-orange-500 dark:focus:ring-orange-400
-            outline-none transition-all duration-200"
-                    />
+                    {/* ── Search ── */}
+                    <div>
+                        <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
+                            Add people
+                        </p>
+                        <div className="relative" ref={dropdownRef}>
+                            <CiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                            <input
+                                type="text"
+                                value={query}
+                                autoComplete="off"
+                                onChange={(e) => handleSearch(e.target.value)}
+                                placeholder="Search by name or email..."
+                                className="w-full pl-9 pr-20 py-2.5 text-sm rounded
+                                    bg-gray-50 dark:bg-neutral-800
+                                    text-gray-900 dark:text-neutral-100
+                                    border border-gray-200 dark:border-neutral-700
+                                    focus:border-orange-500 dark:focus:border-orange-400
+                                    focus:ring-2 focus:ring-orange-500/20
+                                    outline-none transition-all"
+                            />
+                            {loading && (
+                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">
+                                    Searching…
+                                </span>
+                            )}
 
-                    {/* Search Results */}
-                    {results.length > 0 && (
-                        <div className="absolute w-full mt-1 bg-white dark:bg-neutral-900 
-            border border-gray-300 dark:border-neutral-700 shadow-lg z-50 max-h-40 overflow-y-auto">
-
-                            {results.map((user) => (
-                                <div
-                                    key={user._id}
-                                    onClick={() => addUser(user)}
-                                    className="px-3 py-2 text-sm cursor-pointer
-                  text-gray-700 dark:text-gray-200
-                  hover:bg-orange-100 dark:hover:bg-orange-600
-                  hover:text-black dark:hover:text-white transition"
-                                >
-                                    {user.name} ({user.email})
+                            {/* Dropdown */}
+                            {results.length > 0 && (
+                                <div className="absolute left-0 right-0 mt-1.5 bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-lg shadow-xl z-50 max-h-44 overflow-y-auto">
+                                    {results.map((user) => (
+                                        <div
+                                            key={user._id}
+                                            onClick={() => addUser(user)}
+                                            className="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-orange-50 dark:hover:bg-neutral-700 transition"
+                                        >
+                                            <Avatar name={user.name} picture={user.picture} />
+                                            <div className="min-w-0">
+                                                <p className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">{user.name}</p>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
+                                            </div>
+                                            {selectedUsers.find((u) => u._id === user._id) && (
+                                                <IoCheckmark size={15} className="ml-auto text-orange-500 flex-shrink-0" />
+                                            )}
+                                        </div>
+                                    ))}
                                 </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* ── Pills ── */}
+                    {selectedUsers.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                            {selectedUsers.map((user) => (
+                                <span
+                                    key={user._id}
+                                    className="flex items-center gap-1.5 pl-1.5 pr-2 py-1 rounded-full
+                                        bg-gray-100 dark:bg-neutral-800
+                                        border border-gray-200 dark:border-neutral-700
+                                        text-gray-700 dark:text-gray-200 text-xs"
+                                >
+                                    <Avatar name={user.name} picture={user.picture} />
+                                    <span className="max-w-[100px] truncate">{user.name}</span>
+                                    <button
+                                        onClick={() => removeUser(user._id)}
+                                        className="ml-0.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition"
+                                    >
+                                        <IoClose size={13} />
+                                    </button>
+                                </span>
                             ))}
                         </div>
                     )}
+
+                    {/* ── Divider ── */}
+                    <div className="border-t border-gray-100 dark:border-neutral-800" />
+
+                    {/* ── General Access ── */}
+                    <div>
+                        <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">
+                            General access
+                        </p>
+                        <div className="grid grid-cols-2 gap-2">
+                            <button
+                                onClick={() => setLinkAccess("restricted")}
+                                className={`flex items-center gap-2.5 px-3 py-3 rounded border text-left transition-all
+                                    ${linkAccess === "restricted"
+                                        ? "border-orange-400 bg-orange-50 dark:bg-orange-950/30"
+                                        : "border-gray-200 dark:border-neutral-700 hover:border-gray-300 dark:hover:border-neutral-600 bg-white dark:bg-neutral-800/50"
+                                    }`}
+                            >
+                                <div className={`p-1.5 rounded-full flex-shrink-0 ${linkAccess === "restricted" ? "bg-orange-100 dark:bg-orange-900/60" : "bg-gray-100 dark:bg-neutral-700"}`}>
+                                    <IoLockClosedOutline size={14} className={linkAccess === "restricted" ? "text-orange-600 dark:text-orange-300" : "text-gray-500 dark:text-gray-400"} />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className={`text-sm font-medium truncate ${linkAccess === "restricted" ? "text-orange-700 dark:text-orange-300" : "text-gray-700 dark:text-gray-200"}`}>
+                                        Restricted
+                                    </p>
+                                    <p className="text-xs text-gray-400 dark:text-gray-500 truncate">Only invited</p>
+                                </div>
+                                {linkAccess === "restricted" && <IoCheckmark className="text-orange-500 flex-shrink-0" size={16} />}
+                            </button>
+
+                            <button
+                                onClick={() => setLinkAccess("anyone")}
+                                className={`flex items-center gap-2.5 px-3 py-3 rounded border text-left transition-all
+                                    ${linkAccess === "anyone"
+                                        ? "border-orange-400 bg-orange-50 dark:bg-orange-950/30"
+                                        : "border-gray-200 dark:border-neutral-700 hover:border-gray-300 dark:hover:border-neutral-600 bg-white dark:bg-neutral-800/50"
+                                    }`}
+                            >
+                                <div className={`p-1.5 rounded-full flex-shrink-0 ${linkAccess === "anyone" ? "bg-orange-100 dark:bg-orange-900/60" : "bg-gray-100 dark:bg-neutral-700"}`}>
+                                    <IoEarthOutline size={14} className={linkAccess === "anyone" ? "text-orange-600 dark:text-orange-300" : "text-gray-500 dark:text-gray-400"} />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className={`text-sm font-medium truncate ${linkAccess === "anyone" ? "text-orange-700 dark:text-orange-300" : "text-gray-700 dark:text-gray-200"}`}>
+                                        Anyone
+                                    </p>
+                                    <p className="text-xs text-gray-400 dark:text-gray-500 truncate">With the link</p>
+                                </div>
+                                {linkAccess === "anyone" && <IoCheckmark className="text-orange-500 flex-shrink-0" size={16} />}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* ── Copy Link ── */}
+                    <div className="flex items-center gap-2 px-3 py-2.5 rounded bg-gray-50 dark:bg-neutral-800 border border-gray-100 dark:border-neutral-700">
+                        <IoLinkOutline size={15} className="text-gray-400 flex-shrink-0" />
+                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate flex-1 font-mono select-all">
+                            {documentLink}
+                        </p>
+
+                        {/* Permission select — always visible */}
+                        <select
+                            value={permission}
+                            onChange={(e) => setPermission(e.target.value)}
+                            className="text-xs font-medium px-2 py-1.5 rounded cursor-pointer outline-none flex-shrink-0
+                                bg-white dark:bg-neutral-700
+                                border border-gray-200 dark:border-neutral-600
+                                text-gray-700 dark:text-gray-200
+                                focus:border-orange-400"
+                        >
+                            <option value="view">View</option>
+                            <option value="edit">Edit</option>
+                        </select>
+
+                        <button
+                            onClick={handleCopyLink}
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium transition flex-shrink-0
+                                ${copied
+                                    ? "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800"
+                                    : "bg-white dark:bg-neutral-700 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-neutral-600 hover:border-orange-400 hover:text-orange-600 dark:hover:text-orange-400"
+                                }`}
+                        >
+                            {copied ? <IoCheckmark size={13} /> : <MdContentCopy size={13} />}
+                            {copied ? "Copied!" : "Copy link"}
+                        </button>
+                    </div>
                 </div>
 
-                {/* Loading */}
-                {loading && (
-                    <p className="text-xs text-gray-500 mt-2">Searching...</p>
-                )}
-
-                {/* 👥 Selected Users */}
-                {selectedUsers.length > 0 && (
-                    <div className="mt-4 space-y-2 max-h-40 overflow-y-auto">
-                        {selectedUsers.map((user) => (
-                            <div
-                                key={user._id}
-                                className="flex items-center justify-between px-3 py-2
-                bg-gray-100 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700"
-                            >
-                                <div>
-                                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
-                                        {user.name}
-                                    </p>
-                                    <p className="text-xs text-gray-500">
-                                        {user.email}
-                                    </p>
-                                </div>
-
-                                <div className="flex items-center gap-2">
-                                    {/* Permission */}
-                                    <select
-                                        value={user.permission}
-                                        onChange={(e) =>
-                                            updatePermission(user._id, e.target.value)
-                                        }
-                                        className="text-xs px-2 py-1
-                    bg-white dark:bg-neutral-900
-                    border border-gray-300 dark:border-neutral-600
-                    text-gray-800 dark:text-gray-200"
-                                    >
-                                        <option value="read">View</option>
-                                        <option value="write">Edit</option>
-                                    </select>
-
-                                    {/* Remove */}
-                                    <button
-                                        onClick={() => removeUser(user._id)}
-                                        className="text-red-500 hover:text-red-600 text-sm"
-                                    >
-                                        ✕
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
+                {/* ── Footer ── */}
+                <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100 dark:border-neutral-800 bg-gray-50/70 dark:bg-neutral-900/60">
+                    <p className="text-xs text-gray-400 dark:text-gray-500">
+                        {selectedUsers.length > 0
+                            ? `${selectedUsers.length} person${selectedUsers.length > 1 ? "s" : ""} added`
+                            : "No people added yet"}
+                    </p>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={onClose}
+                            className="px-4 py-2 text-sm rounded text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-neutral-700 transition"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleSubmit}
+                            className="px-5 py-2 text-sm rounded font-medium bg-orange-500 text-white hover:bg-orange-600 active:bg-orange-700 transition"
+                        >
+                            Done
+                        </button>
                     </div>
-                )}
-
-                {/* Footer */}
-                <div className="flex justify-end gap-2 mt-6">
-                    <button
-                        onClick={onClose}
-                        className="px-4 py-1.5 text-sm
-            bg-gray-300 dark:bg-neutral-700
-            text-gray-800 dark:text-white"
-                    >
-                        Cancel
-                    </button>
-
-                    <button
-                        onClick={handleSubmit}
-                        disabled={selectedUsers.length === 0}
-                        className="px-4 py-1.5 text-sm
-            bg-orange-500 text-white
-            hover:bg-orange-600
-            disabled:opacity-50 transition"
-                    >
-                        Share
-                    </button>
                 </div>
             </div>
         </div>

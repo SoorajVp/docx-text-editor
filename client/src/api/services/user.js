@@ -12,6 +12,15 @@ const userService = {
         }
     },
 
+    GetUserList: async (search) => {
+        try {
+            const response = await apiClient.get(`/user/list`, { params: { search } });
+            return response.data
+        } catch (error) {
+            throw error
+        }
+    },
+
     UpdateUserDetails: async (payload) => {
         try {
             const response = await apiClient.post(`/user/update`, payload);

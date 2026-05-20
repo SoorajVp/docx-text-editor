@@ -187,14 +187,14 @@ const DetailSidebar = ({ onDelete, onUpdate, onSaveFileName }) => {
                 />
             )}
 
-            {
-                openShareModal && (
-                    <ShareModal
-                        onClose={() => setOpenShareModal(false)}
-                        onShare={null} searchUsers={null}
-                    />
-                )
-            }
+            {openShareModal && (
+                <ShareModal
+                    onClose={() => setOpenShareModal(false)}
+                    onShare={null}
+                    searchUsers={null}
+                    documentId={document?._id}
+                />
+            )}
         </>
     );
 };

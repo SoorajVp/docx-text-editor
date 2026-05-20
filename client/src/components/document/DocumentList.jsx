@@ -13,14 +13,14 @@ const DocumentList = ({ documents, listType, loading }) => {
                             loading ?
                                 Array.from({ length: 5 }).map((_, index) => (
                                     <li key={index}
-                                        className="border border-neutral-300 h-16 dark:border-neutral-700 bg-neutral-100 dark:bg-black animate-pulse">
+                                        className="rounded border border-neutral-300 h-16 dark:border-neutral-700 bg-neutral-100 dark:bg-black animate-pulse">
                                     </li>
                                 ))
                                 :
                                 documents?.map((item) => (
                                     <Link to={`/doc/view/${item?._id}`}
                                         key={item?._id}
-                                        className="flex justify-between items-center border border-neutral-300 hover:border-orange-400 dark:hover:border-orange-600 dark:border-neutral-700 bg-neutral-100 dark:bg-black px-4 py-2 shadow-md transition duration-500 ease-in-out"
+                                        className="flex justify-between items-center rounded border border-neutral-300 hover:border-orange-400 dark:hover:border-orange-600 dark:border-neutral-700 bg-neutral-100 dark:bg-black px-4 py-2 shadow-md transition duration-500 ease-in-out"
                                     >
                                         <div className="flex items-center">
                                             <IoIosDocument size={35} className='text-gray-500' />
@@ -47,14 +47,14 @@ const DocumentList = ({ documents, listType, loading }) => {
                             loading ?
                                 Array.from({ length: 10 }).map((_, index) => (
                                     <li key={index}
-                                        className="border border-neutral-300 h-40 dark:border-neutral-700 bg-neutral-100 dark:bg-black animate-pulse">
+                                        className="rounded border border-neutral-300 h-40 dark:border-neutral-700 bg-neutral-100 dark:bg-black animate-pulse">
                                     </li>
                                 ))
                                 :
                                 documents?.map((item) => (
                                     <Link to={`/doc/view/${item?._id}`}
                                         key={item?._id}
-                                        className="text-center border border-neutral-300 hover:border-orange-400 dark:hover:border-orange-600 dark:border-neutral-700 bg-neutral-100 dark:bg-black p-5 shadow-md transition duration-500 ease-in-out"
+                                        className="text-center rounded border border-neutral-300 hover:border-orange-400 dark:hover:border-orange-600 dark:border-neutral-700 bg-neutral-100 dark:bg-black p-5 shadow-md transition duration-500 ease-in-out"
                                     >
                                         <IoIosDocument size={60} className='text-gray-500 mx-auto -mb-3' />
                                         <span className="text-neutral-500 text-xs ">{getFileSizeInMB(item?.size)}</span>

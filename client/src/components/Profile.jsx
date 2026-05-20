@@ -115,7 +115,7 @@ const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
                                                 name="firstName"
                                                 value={user.firstName}
                                                 onChange={handleInputChange}
-                                                className="block w-full text-sm bg-white dark:bg-black text-black dark:text-neutral-200 border border-gray-400 dark:border-gray-700 focus:border-orange-500 dark:focus:border-orange-300 outline-none transition duration-500 ease-in-out px-2 py-1.5"
+                                                className="block w-full text-sm rounded bg-white dark:bg-black text-black dark:text-neutral-200 border border-gray-400 dark:border-gray-700 focus:border-orange-500 dark:focus:border-orange-300 outline-none transition duration-500 ease-in-out px-2 py-1.5"
                                             />
                                         ) : (
                                             <p className="py-1"> : {user.firstName}</p>
@@ -131,7 +131,7 @@ const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
                                                 name="lastName"
                                                 value={user.lastName}
                                                 onChange={handleInputChange}
-                                                className="block w-full text-sm bg-white dark:bg-black text-black dark:text-neutral-200 border border-gray-400 dark:border-gray-700 focus:border-orange-500 dark:focus:border-orange-300 outline-none transition duration-500 ease-in-out px-2 py-1.5"
+                                                className="block w-full text-sm rounded bg-white dark:bg-black text-black dark:text-neutral-200 border border-gray-400 dark:border-gray-700 focus:border-orange-500 dark:focus:border-orange-300 outline-none transition duration-500 ease-in-out px-2 py-1.5"
                                             />
                                         ) : (
                                             <p className="py-1"> : {user.lastName}</p>
@@ -149,7 +149,7 @@ const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
                                                 type="text"
                                                 name="email"
                                                 value={user.email} disabled
-                                                className="block w-full text-sm bg-white dark:bg-black text-black dark:text-neutral-200 border border-gray-400 dark:border-gray-700 focus:border-orange-500 dark:focus:border-orange-300 outline-none transition duration-500 ease-in-out px-2 py-1.5"
+                                                className="block w-full text-sm rounded bg-white dark:bg-black text-black dark:text-neutral-200 border border-gray-400 dark:border-gray-700 focus:border-orange-500 dark:focus:border-orange-300 outline-none transition duration-500 ease-in-out px-2 py-1.5"
                                             />
                                         ) : (
                                             <p className="py-1"> : {user.email}</p>
@@ -163,7 +163,7 @@ const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
                                             <select
                                                 name="theme"
                                                 onChange={handleInputChange}
-                                                className="block w-full text-sm bg-white dark:bg-black text-black dark:text-neutral-200 border border-gray-400 dark:border-gray-700 focus:border-orange-500 dark:focus:border-orange-300 outline-none transition duration-500 ease-in-out px-2 py-1.5"
+                                                className="block w-full text-sm rounded bg-white dark:bg-black text-black dark:text-neutral-200 border border-gray-400 dark:border-gray-700 focus:border-orange-500 dark:focus:border-orange-300 outline-none transition duration-500 ease-in-out px-2 py-1.5"
                                                 defaultValue={user?.theme || "light"}
                                             >
                                                 <option value="dark">Dark</option>
@@ -179,8 +179,8 @@ const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
 
                         {isEditing ? (
                             <div className="flex gap-1 mt-2">
-                                <button onClick={HandleDiscard} className="w-full py-1 border border-neutral-400 bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-200 text-black dark:text-white transition duration-300 ease-in-out">Cancel</button>
-                                <button onClick={handleSubmit} className="w-full py-1 bg-orange-500 hover:bg-orange-500 text-white transition duration-300 ease-in-out">Save Changes</button>
+                                <button onClick={HandleDiscard} className="w-full rounded py-1 border border-neutral-400 bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-200 text-black dark:text-white transition duration-300 ease-in-out">Cancel</button>
+                                <button onClick={handleSubmit} className="w-full rounded py-1 bg-orange-500 hover:bg-orange-500 text-white transition duration-300 ease-in-out">Save Changes</button>
                             </div>
                         ) : (
                             <>
@@ -209,10 +209,10 @@ const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
                             onChange={handleInputChange}
                         />
                         {isEditing ?
-                            <button className="w-full border border-neutral-500 mt-2 dark:text-white text-sm py-0.5" onClick={() => document.getElementById("fileInput").click()}>
+                            <button className="w-full rounded border border-neutral-500 mt-2 dark:text-white text-sm py-0.5" onClick={() => document.getElementById("fileInput").click()}>
                                 Change Picture
                             </button> :
-                            <button onClick={() => setShowModal(true)} className="flex items-center gap-2 justify-center w-full border border-red-500 mt-2 text-red-700 dark:text-red-500 bg-neutral-100 dark:bg-neutral-900 py-1 font-semibold text-base">
+                            <button onClick={() => setShowModal(true)} className="flex items-center gap-2 justify-center w-full text-sm rounded border border-red-500 mt-2 text-red-700 dark:text-red-500 bg-neutral-100 dark:bg-neutral-900 py-1 font-semibold">
                                 Logout <IoLogOutOutline size={20} />
                             </button>
                         }

@@ -74,7 +74,7 @@ const HomePage = () => {
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search"
               value={Search}
-              className="w-full pl-10 pr-3 py-1.5 text-sm  bg-white dark:bg-black text-black dark:text-neutral-200 border border-gray-400 dark:border-gray-700 focus:border-orange-500 dark:focus:border-orange-300 outline-none transition duration-300"
+              className="w-full pl-10 pr-3 py-1.5 text-sm rounded  bg-white dark:bg-black text-black dark:text-neutral-200 border border-gray-400 dark:border-gray-700 focus:border-orange-500 dark:focus:border-orange-300 outline-none transition duration-300"
             />
           </div>
 
@@ -90,13 +90,13 @@ const HomePage = () => {
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setShowDropdown((prev) => !prev)}
-                className="flex gap-1 items-center px-4 py-1 border-2 text-xs md:text-sm font-medium border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white transition duration-300 ease-in-out"
+                className="flex gap-1 rounded items-center px-4 py-1 border-2 text-xs md:text-sm font-medium border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white transition duration-300 ease-in-out"
               >
                 New Document<CgChevronDown size={20} />
               </button>
 
               {showDropdown && (
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-black shadow-md border border-gray-300 dark:border-gray-700">
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded dark:bg-black shadow-md border border-gray-300 dark:border-gray-700">
                   <button
                     onClick={() => {
                       navigate("/upload")
