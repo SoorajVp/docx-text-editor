@@ -11,6 +11,22 @@ const GetUserDetails = async (req, res, next) => {
     }
 }
 
+const GetUserList = async (req, res, next) => {
+    try {
+        const { search } = req.query
+        const users = await User.find({
+            email: { $exists: true },
+            $or: [
+                { name: { $regex: search, $options: "i" } },
+                { email: { $regex: search, $options: "i" } },
+            ],
+        }).select("name email picture")
+        res.status(200).json({ message: `User List fetched`, users })
+    } catch (error) {
+        next(error)
+    }
+}
+
 const UpdateUser = async (req, res, next) => {
     try {
         const { given_name, family_name, theme } = req.body;
@@ -35,4 +51,4 @@ const UpdateUser = async (req, res, next) => {
     }
 }
 
-export default { GetUserDetails, UpdateUser }
+export default { GetUserDetails, GetUserList, UpdateUser }
