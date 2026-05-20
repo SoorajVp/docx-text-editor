@@ -47,24 +47,36 @@ apiClient.interceptors.response.use(
     
     (error) => {
         // Handle errors globally
-        console.log('Axios response Error => ', error);
         if (error.status === 401) {
             localStorage.removeItem('auth_token')
             location.pathname = "/get-started"
         }
-        toast.error(error.response.data.message, {
-            style: {
-                border: '1px solid #ff4040',
-                borderRadius: '0px',
-                padding: '8px',
-                color: '#fff',
-                backgroundColor: '#1a1a1a',
-            },
-            iconTheme: {
-                primary: '#ff1e1e',
-                secondary: '#FFFAEE',
-            },
-        });
+
+        console.log('error.response', error.response)
+
+        if (!navigator.onLine) {
+            console.log("offline-error")
+
+            window.dispatchEvent(new Event("offline-error"));
+        } else if (!error.response) {
+            console.log("Server offline")
+            window.dispatchEvent(new Event("server-error"));
+        } else {
+            toast.error(error.response.data.message, {
+                style: {
+                    border: '1px solid #ff4040',
+                    borderRadius: '0px',
+                    padding: '8px',
+                    color: '#fff',
+                    backgroundColor: '#1a1a1a',
+                },
+                iconTheme: {
+                    primary: '#ff1e1e',
+                    secondary: '#FFFAEE',
+                },
+            });
+        }
+
         return Promise.reject(error);
     }
 );

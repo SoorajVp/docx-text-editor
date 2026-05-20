@@ -95,7 +95,7 @@ const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
 
     return (
         <div className="h-full w-full flex items-center justify-center p-2">
-            <div className="relative w-full bg-white max-w-4xl my-8 md:my-16 flex flex-col-reverse sm:flex-row items-start justify-between space-y-4 sm:space-y-0 sm:space-x-6 px-4 py-8 border border-gray-400 dark:border-gray-700 dark:bg-neutral-950 shadow-lg">
+            <div className="relative w-full bg-white max-w-4xl my-8 md:my-16 flex flex-col-reverse sm:flex-row items-start justify-between space-y-4 sm:space-y-0 sm:space-x-6 px-4 py-8  dark:bg-neutral-950 shadow-lg">
 
                 {/* Profile Details Section */}
                 <div className="w-full flex flex-col items-center sm:items-start md:ml-4">
