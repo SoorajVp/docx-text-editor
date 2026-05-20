@@ -1,21 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FaFile, FaSave, FaCalendarAlt } from 'react-icons/fa';
+import { FaFile, FaSave, FaCalendarAlt, FaShareAlt } from 'react-icons/fa';
 import { TbLayoutSidebarLeftCollapseFilled, TbLayoutSidebarLeftExpand } from "react-icons/tb";
 import { IoIosSave, IoMdArrowRoundBack, IoMdDownload, IoMdTrash } from "react-icons/io";
 import { MdMovieEdit, MdOutlineFileDownloadDone, MdUpdate } from "react-icons/md";
-import { BiEdit } from "react-icons/bi";
+import { HiShare } from "react-icons/hi";
 import { RiEdit2Fill } from "react-icons/ri";
 import { DownloadFile, formatDate, GetFileExtension, getFileNameOG, getFileSizeInMB } from '../../utils/helper';
 import ConfirmationModal from '../modals/AlertModal';
 import documentService from '../../api/services/document';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import ShareModal from '../modals/ShareModal';
 
 const DetailSidebar = ({ onDelete, onUpdate, onSaveFileName }) => {
 
     const { document } = useSelector(store => store.document)
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [modalAction, setModalAction] = useState(false);
+    const [openShareModal, setOpenShareModal] = useState(false);
+
     const [isEditing, setIsEditing] = useState(false);
     const [fileName, setFileName] = useState("");
     const location = useLocation();
@@ -167,7 +170,9 @@ const DetailSidebar = ({ onDelete, onUpdate, onSaveFileName }) => {
                                         <MdUpdate size={20} /> {isSidebarOpen && "Update Document"}
                                     </button>)
                         }
-
+                        <button className="flex items-center gap-3 p-2 text-gray-800 dark:text-gray-300 bg-gray-200 dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-sm w-full" onClick={() => setOpenShareModal(true)}>
+                            <HiShare size={20} /> {isSidebarOpen && "Share"}
+                        </button>
                         <button className="flex items-center gap-3 p-2 text-red-600 dark:text-red-400 bg-gray-200 dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-sm w-full" onClick={handleDeleteClick}>
                             <IoMdTrash size={20} /> {isSidebarOpen && "Delete Document"}
                         </button>
@@ -181,6 +186,15 @@ const DetailSidebar = ({ onDelete, onUpdate, onSaveFileName }) => {
                     onCancel={() => setModalAction(null)}
                 />
             )}
+
+            {
+                openShareModal && (
+                    <ShareModal
+                        onClose={() => setOpenShareModal(false)}
+                        onShare={null} searchUsers={null}
+                    />
+                )
+            }
         </>
     );
 };

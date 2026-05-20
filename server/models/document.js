@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 
-// Define the schema for the User model
 const documentSchema = new mongoose.Schema(
     {
         user_id: {
@@ -28,6 +27,19 @@ const documentSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        is_public: {
+            type: Boolean,
+            default: true,
+        },
+
+        // ✅ New field
+        access: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User',
+            }
+        ],
+
         deletedAt: {
             type: Date,
             default: null
