@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import DocxTextBlock from './DocxTextBlock';
+import MiniLoading from '../../loading/MiniLoading';
 
-const DocxEditor = ({ textBlocks, setTextBlocks }) => {
+const DocxEditor = ({ textBlocks, setTextBlocks, loading }) => {
     const groupSentences = () => {
         // First, group by paragraph
         const paragraphs = {};
@@ -63,20 +64,27 @@ const DocxEditor = ({ textBlocks, setTextBlocks }) => {
         });
     };
 
+
     return (
         <div className='w-full h-full space-y-2 p-2 overflow-auto'>
-            {groupedSentences.map((blockGroup, index) => (
-                blockGroup.length > 0 ? (
-                    <DocxTextBlock
-                        key={`block-${blockGroup[0].paraId}-${blockGroup[0].sentId}`}
-                        index={index}
-                        onUpdate={handleTextBlockUpdate}
-                        block={blockGroup}
-                    />
-                ) : (
-                    <div key={`empty-${index}`} style={{ minHeight: '40px' }} />
+            {/* <MiniLoading /> */}
+            {loading ? <MiniLoading /> :
+                (
+                    groupedSentences.map((blockGroup, index) => (
+                        blockGroup.length > 0 ? (
+                            <DocxTextBlock
+                                key={`block-${blockGroup[0].paraId}-${blockGroup[0].sentId}`}
+                                index={index}
+                                onUpdate={handleTextBlockUpdate}
+                                block={blockGroup}
+                            />
+                        ) : (
+                            <div key={`empty-${index}`} style={{ minHeight: '40px' }} />
+                        )
+                    ))
                 )
-            ))}
+            }
+
         </div>
     );
 };

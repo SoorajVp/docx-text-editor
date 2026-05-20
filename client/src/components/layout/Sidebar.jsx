@@ -15,7 +15,7 @@ const DetailSidebar = ({ onDelete, onUpdate, onSaveFileName }) => {
 
     const { document } = useSelector(store => store.document)
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const [showModal, setShowModal] = useState(false);
+    const [modalAction, setModalAction] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [fileName, setFileName] = useState("");
     const location = useLocation();
@@ -26,7 +26,6 @@ const DetailSidebar = ({ onDelete, onUpdate, onSaveFileName }) => {
     const pathParts = location.pathname.split("/"); // ['', 'doc', 'edit', '67aedb19cbee9e50a9ffd148']
     const mode = pathParts[2]; // 'edit' or 'view'
 
-    console.log('mode', mode)
     useEffect(() => {
         if (isEditing && inputRef.current) {
             inputRef.current.focus();
@@ -45,12 +44,12 @@ const DetailSidebar = ({ onDelete, onUpdate, onSaveFileName }) => {
     };
 
     const handleDeleteClick = () => {
-        setShowModal(true);
+        setModalAction("bin");
     };
 
     const handleConfirmDelete = () => {
         onDelete(document?._id);
-        setShowModal(false);
+        setModalAction(null);
     };
 
     const handleSaveFileName = async () => {
@@ -71,7 +70,6 @@ const DetailSidebar = ({ onDelete, onUpdate, onSaveFileName }) => {
     };
 
     const handleSaveClick = (e) => {
-        console.log("Saving------------------")
         e.stopPropagation();
         handleSaveFileName();
     };
@@ -161,7 +159,7 @@ const DetailSidebar = ({ onDelete, onUpdate, onSaveFileName }) => {
                         }
                         {
                             mode === "edit" ?
-                                <button className="flex items-center gap-3 p-2 text-gray-800 dark:text-gray-300 bg-gray-200 dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-sm w-full" onClick={() => navigate(`/doc/view/${id}`)}>
+                                <button className="flex items-center gap-3 p-2 text-gray-800 dark:text-gray-300 bg-gray-200 dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-sm w-full" onClick={() => setModalAction("discard")}>
                                     <IoMdArrowRoundBack size={20} /> {isSidebarOpen && "Exit Editing"}
                                 </button> :
                                 ((GetFileExtension(document?.mime_type) !== "pdf") &&
@@ -176,11 +174,11 @@ const DetailSidebar = ({ onDelete, onUpdate, onSaveFileName }) => {
                     </ul>
                 </div>
             </div>
-            {showModal && (
+            {modalAction && (
                 <ConfirmationModal
-                    action="bin"
-                    onConfirm={handleConfirmDelete}
-                    onCancel={() => setShowModal(false)}
+                    action={modalAction}
+                    onConfirm={modalAction === "bin" ? handleConfirmDelete : (() => navigate(`/doc/view/${id}`))}
+                    onCancel={() => setModalAction(null)}
                 />
             )}
         </>

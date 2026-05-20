@@ -8,7 +8,7 @@ const Header = () => {
   const { user_data } = useSelector((store) => store.user)
 
   return (
-    <header className="flex w-full items-center justify-between bg-neutral-300 z-20 dark:bg-black px-6 py-3 font-serif border-b border-gray-400 dark:border-gray-600">
+    <header className="flex w-full items-center justify-between bg-neutral-300 z-20 dark:bg-black px-6 py-3 font-serif ">
       <div className="flex items-center gap-2">
         <Link to="/get-started" className="flex items-center gap-1 truncate uppercase text-lg font-semibold text-neutral-700 dark:text-gray-200">
           <IoFileTrayFullSharp size={25} /> <span className="bg-gradient-to-r from-black dark:from-white to-gray-500 dark:to-gray-500  bg-clip-text text-transparent">Documate</span> 

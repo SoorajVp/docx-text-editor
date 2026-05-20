@@ -16,31 +16,30 @@ const EditDocument = () => {
     const dispatch = useDispatch();
     const [document, setDocument] = useState(null);
     const [documentTextBlocks, setDocumentTextBlocks] = useState([])
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchDocumentById = async () => {
+            setLoading(true)
             try {
-                dispatch(setPageLoading(true))
                 const { document, textBlocks } = await documentService.GetDocumentTextBlocks(id)
                 setDocument(document);
                 setDocumentTextBlocks(textBlocks);
                 dispatch(setDocumentData(document));
+
             } finally {
-                dispatch(setPageLoading(false))
+                setLoading(false)
             }
         }
         fetchDocumentById()
     }, [])
 
-
     const HandleMoveToBin = async (id) => {
         await documentService.DocumentSoftDelete(id)
-        navigate('/')
+        navigate('/files')
     }
 
     const HandleSaveFileName = async (fileName, document) => {
-        // Your custom logic to save the file name
-        console.log("Saving:", fileName);
         const payload = {
             id: document?._id,
             mimetype: document?.mime_type,
@@ -58,6 +57,7 @@ const EditDocument = () => {
             const response = await documentService.UpdateDocument({ id, textBlocks: documentTextBlocks })
             setDocument(response?.document);
             dispatch(setDocumentData(response?.document));
+            navigate(`/doc/view/${id}`)
         } finally {
             dispatch(setPageLoading(false))
         }
@@ -74,11 +74,11 @@ const EditDocument = () => {
                 <div className='md:w-1/2 w-full'>
                     {
                         GetFileExtension(document?.mime_type) === "docx" &&
-                        <DocxEditor textBlocks={documentTextBlocks} setTextBlocks={setDocumentTextBlocks} />
+                        <DocxEditor textBlocks={documentTextBlocks} setTextBlocks={setDocumentTextBlocks} loading={loading} />
                     }
                     {
                         GetFileExtension(document?.mime_type) === "pptx" &&
-                        <PptxEditor textBlocks={documentTextBlocks} setTextBlocks={setDocumentTextBlocks} />
+                        <PptxEditor textBlocks={documentTextBlocks} setTextBlocks={setDocumentTextBlocks} loading={loading} />
                     }
                 </div>
             </div>

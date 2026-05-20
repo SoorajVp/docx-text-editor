@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import PptxTextBlock from './PptxTextBlock';
 
-const PptxEditor = ({ textBlocks, setTextBlocks }) => {
+const PptxEditor = ({ textBlocks, setTextBlocks, loading }) => {
     // Group text blocks by slide and shape
     const groupBlocks = () => {
         const groups = {};
@@ -41,16 +41,19 @@ const PptxEditor = ({ textBlocks, setTextBlocks }) => {
 
     return (
         <div className='w-full h-full space-y-2 p-2 overflow-auto'>
-            {groupedBlocks.map((blockGroup, index) => (
-                <div key={`group-${blockGroup[0].id}`} >
-                    <PptxTextBlock
-                        key={`block-${blockGroup[0].id}`}
-                        index={index}
-                        onUpdate={handleTextBlockUpdate}
-                        block={blockGroup}
-                    />
-                </div>
-            ))}
+            {loading ? <MiniLoading /> :
+                (
+                    groupedBlocks.map((blockGroup, index) => (
+                        <div key={`group-${blockGroup[0].id}`} >
+                            <PptxTextBlock
+                                key={`block-${blockGroup[0].id}`}
+                                index={index}
+                                onUpdate={handleTextBlockUpdate}
+                                block={blockGroup}
+                            />
+                        </div>
+                    )))
+            }
         </div>
     );
 };

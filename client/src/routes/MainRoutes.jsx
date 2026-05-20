@@ -8,7 +8,7 @@ import CreateDocument from '../components/CreateDocument';
 import DetailsPage from '../pages/DetailsPage';
 import BinFilesPage from '../pages/BinFilesPage';
 import ProfilePage from '../pages/ProfilePage';
-import Loading from '../components/Loading';
+import Loading from '../components/loading/Loading';
 import DocumentPage from '../pages/DocumentPage';
 import EditDocument from '../pages/EditDocument';
 import NotFound from '../components/error/NotFound';
@@ -16,16 +16,17 @@ import UploadDocument from '../pages/UploadDocument';
 
 
 function MainRoutes() {
-   
+
     return (
         <Routes>
             <Route path="/test" element={<DocumentViewer />} />
             <Route path="/get-started" element={<LandingPage />} />
             <Route path="/document" element={<DocumentPage />} />
 
+            <Route path="/" element={<LandingPage />} />
 
             <Route path='/' element={<Layout />} >
-                <Route path="" element={<HomePage />} />
+                <Route path="/files" element={<HomePage />} />
                 {/* <Route path="/edit" element={<EditingPage />} /> */}
                 <Route path="/create" element={<CreateDocument />} />
                 <Route path="/upload" element={<UploadDocument />} />
