@@ -5,6 +5,7 @@ import ConnectDatabase from "./config/mongoose.js";
 import errorMiddleware from './middlewares/errorMiddleware.js';
 
 import documentRoutes from "./routes/document.js"
+import accessRoutes from "./routes/access.js"
 import userRoutes from "./routes/user.js"
 import authRoutes from "./routes/auth.js"
 
@@ -27,6 +28,8 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes)
 app.use("/api/user", userRoutes)
 app.use("/api/document", documentRoutes)
+app.use("/api/access", accessRoutes)
+
 
 
 app.get("*", ( req, res) => {

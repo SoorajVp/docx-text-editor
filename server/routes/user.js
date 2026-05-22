@@ -11,4 +11,5 @@ router.get('/list', verifyUser, controller.GetUserList)
 
 router.post('/update', verifyUser, upload.single("picture"), controller.UpdateUser)
 
+
 export default router;

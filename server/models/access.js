@@ -14,7 +14,6 @@ const accessSchema = new mongoose.Schema(
         recipientId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
-            required: true,
             index: true,
         },
 
@@ -41,6 +40,10 @@ const accessSchema = new mongoose.Schema(
             default: 'read',
         },
 
+         enabled: {
+            type: Boolean,
+            default: false,
+        },
         // Optional: when user responded
         respondedAt: {
             type: Date,
