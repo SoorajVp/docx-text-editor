@@ -83,7 +83,7 @@ const DocxTextBlock = ({ block, index, onUpdate }) => {
             suppressContentEditableWarning={true}
             onBlur={handleBlur}
             onPaste={handlePaste}
-            className="p-2 dark:text-white bg-white border border-neutral-200 dark:border-neutral-800 dark:bg-black focus:border-orange-400 outline-none"
+            className="p-2 dark:text-white bg-white border border-neutral-200 dark:border-neutral-800 dark:bg-black focus:border-orange-400 dark:focus:border-orange-600 outline-none"
             style={{
                 width: '100%',
                 overflow: 'hidden',
