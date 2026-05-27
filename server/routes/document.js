@@ -17,6 +17,8 @@ router.get('/text-blocks', verifyUser, controller.GetDocumentTexts)
 
 router.post('/update', verifyUser, controller.UpdateDocument)
 
+router.post('/change-visibility', verifyUser, controller.ChangeVisibility)
+
 router.post('/move-to-bin', verifyUser, controller.SoftDeleteDocument)
 
 router.post('/restore-bin', verifyUser, controller.RestoreDocuments)

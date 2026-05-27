@@ -154,9 +154,9 @@ const buildInvitationHtml = ({ senderName, documentName, permission, inviteUrl }
 </html>`;
 };
 
-const sendAccessRequestEmail = async ({ senderName, senderEmail, recipientEmail, documentName, accessId, permission }) => {
+const sendAccessRequestEmail = async ({ senderName, senderEmail, recipientEmail, documentName, accessId, permission, documentId }) => {
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-    const inviteUrl = `${frontendUrl}/shared/${accessId}`;
+  const inviteUrl = `${frontendUrl}/shared/${accessId}?doc=${documentId}`;
 
     try {
         const info = await transporter.sendMail({

@@ -86,15 +86,15 @@ const ShareModal = ({ onClose, onShare, documentId }) => {
         try {
             const payload = {
                 doc_id: documentId,
-                emails: selectedUsers.map((u) => u.email),
+                emails: [...selectedUsers.map((u) => u.email),... existingAccess.map((a) => a.recipientId?.email)],
                 mode: permission === "edit" ? "write" : "read",
-                is_public: linkAccess === "anyone",
+                visibility: linkAccess === "anyone" ? "public" : "private",
             };
             const response = await accessService.sendAccessInvitation(payload);
-            if (response?.url) setSharedUrl(response.url);
+            if (response?.accessUri) setSharedUrl(response.accessUri);
             // Refresh existing access list
             const fresh = await accessService.GetDocumentAccessList(documentId);
-            setExistingAccess(fresh?.accessList || []);
+            setExistingAccess(fresh?.accessList || []); 
             setSelectedUsers([]);
         } catch (error) {
             console.error("Share failed:", error);
@@ -120,7 +120,7 @@ const ShareModal = ({ onClose, onShare, documentId }) => {
             ? <img src={picture} alt={name} onError={() => setImgError(true)} className={`${size} rounded-full object-cover flex-shrink-0`} />
             : <div className={`${size} rounded-full bg-orange-100 dark:bg-orange-900/50 flex items-center justify-center text-orange-600 dark:text-orange-300 text-xs font-semibold flex-shrink-0`}>
                 {name?.[0]?.toUpperCase() ?? "?"}
-              </div>;
+            </div>;
     };
 
     const PermissionBadge = ({ permission }) =>
@@ -134,6 +134,7 @@ const ShareModal = ({ onClose, onShare, documentId }) => {
             </span>
         );
 
+    console.log('accessUri', sharedUrl)
     return (
         <div
             className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4"
@@ -344,23 +345,26 @@ const ShareModal = ({ onClose, onShare, documentId }) => {
                     </div>
 
                     {/* ── Copy Link ── */}
-                    <div className="flex items-center gap-2 px-3 py-2.5 rounded bg-gray-50 dark:bg-neutral-800 border border-gray-100 dark:border-neutral-700">
-                        <IoLinkOutline size={15} className="text-gray-400 flex-shrink-0" />
-                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate flex-1 font-mono select-all">
-                            {documentLink}
-                        </p>
-                        <button
-                            onClick={handleCopyLink}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium transition flex-shrink-0
+                    {
+                        sharedUrl &&
+                        <div className="flex items-center gap-2 px-3 py-2.5 rounded bg-gray-50 dark:bg-neutral-800 border border-gray-100 dark:border-neutral-700">
+                            <IoLinkOutline size={15} className="text-gray-400 flex-shrink-0" />
+                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate flex-1 font-mono select-all">
+                                {sharedUrl}
+                            </p>
+                            <button
+                                onClick={handleCopyLink}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium transition flex-shrink-0
                                 ${copied
-                                    ? "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800"
-                                    : "bg-white dark:bg-neutral-700 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-neutral-600 hover:border-orange-400 hover:text-orange-600 dark:hover:text-orange-400"
-                                }`}
-                        >
-                            {copied ? <IoCheckmark size={13} /> : <MdContentCopy size={13} />}
-                            {copied ? "Copied!" : "Copy link"}
-                        </button>
-                    </div>
+                                        ? "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800"
+                                        : "bg-white dark:bg-neutral-700 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-neutral-600 hover:border-orange-400 hover:text-orange-600 dark:hover:text-orange-400"
+                                    }`}
+                            >
+                                {copied ? <IoCheckmark size={13} /> : <MdContentCopy size={13} />}
+                                {copied ? "Copied!" : "Copy link"}
+                            </button>
+                        </div>
+                    }
                 </div>
 
                 {/* ── Footer ── */}
@@ -369,8 +373,8 @@ const ShareModal = ({ onClose, onShare, documentId }) => {
                         {sharedUrl
                             ? <span className="text-green-600 dark:text-green-400 font-medium">Invite sent — link ready to copy</span>
                             : selectedUsers.length > 0
-                            ? `${selectedUsers.length} person${selectedUsers.length > 1 ? "s" : ""} selected`
-                            : "Search and add people above"}
+                                ? `${selectedUsers.length} person${selectedUsers.length > 1 ? "s" : ""} selected`
+                                : "Search and add people above"}
                     </p>
                     <div className="flex items-center gap-2">
                         <button

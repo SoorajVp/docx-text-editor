@@ -3,9 +3,9 @@ import mongoose from 'mongoose';
 const documentSchema = new mongoose.Schema(
     {
         user_id: {
-            type: mongoose.SchemaTypes.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
             required: true,
-            trim: true,
         },
         file_name: {
             type: String,
@@ -27,13 +27,15 @@ const documentSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        is_public: {
-            type: Boolean,
-            default: true,
+        visibility: {
+            type: String,
+            enum: ['private', 'shared', 'public'],
+            default: 'private',
+            index: true,
         },
 
         // ✅ New field
-        access: [
+        recipientIds: [
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'User',

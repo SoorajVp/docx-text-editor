@@ -3,64 +3,112 @@ import Access from "../models/access.js";
 import User from "../models/user.js";
 import mailService from "../utils/mailService.js";
 import helper from "../utils/helper.js";
+import AppError from "../utils/appError.js";
+
 
 /* ── Send invitations ────────────────────────────────────────────── */
 const sendAccessInviation = async (req, res, next) => {
     try {
-        const { doc_id, emails, mode, is_public } = req.body;
+        const {
+            doc_id,
+            emails = [],
+            mode = 'viewer',
+            visibility = 'private',
+        } = req.body;
+
         const ownerId = req.userId;
+        const document = await Document.findOneAndUpdate(
+            { _id: doc_id, user_id: ownerId, deletedAt: null },
+            {
+                visibility: visibility
+            },
+            {
+                new: true
+            }
+        ).populate('user_id', 'name email');
 
-        const owner    = await User.findById(ownerId);
-        const document = await Document.findByIdAndUpdate(doc_id, { is_public }, { new: true });
-
-        if(emails.length === 0 && document?.is_public !== true) {
-            
+        if (!document) {
+            throw new AppError('Document not found', 404);
         }
 
+        /* ─────────────────────────────────────────────
+           PRIVATE SHARING
+        ───────────────────────────────────────────── */
+        let access = null;
+
         for (const email of emails) {
-            const recipient = await User.findOne({ email });
+
+            const recipient = await User.findOne({
+                email: email.toLowerCase(),
+            });
+
             if (!recipient) continue;
 
-            // Upsert Access record — one record per (recipient, document) pair
-            const access = await Access.findOneAndUpdate(
-                { recipientId: recipient._id, documentId: doc_id },
+            // Create or update access
+            access = await Access.findOneAndUpdate(
+                {
+                    recipientId: recipient._id,
+                    documentId: doc_id,
+                    visibility: 'private',
+                },
                 {
                     ownerId,
                     recipientId: recipient._id,
                     documentId: doc_id,
-                    permission: mode,   // "read" | "write"
-                    status: "pending",
+                    permission: mode,
+                    visibility: 'private',
                     enabled: true,
+                    deletedAt: null,
                 },
-                { upsert: true, new: true, setDefaultsOnInsert: true }
+                {
+                    upsert: true,
+                    new: true,
+                    setDefaultsOnInsert: true,
+                }
             );
 
+            // Update recipient cache
+            await Document.findByIdAndUpdate(
+                doc_id,
+                {
+                    $addToSet: {
+                        recipientIds: recipient._id,
+                    },
+                }
+            );
+
+            // Send email
             await mailService.sendAccessRequestEmail({
-                senderName:     owner.name,
-                senderEmail:    owner.email,
+                senderName: document.user_id.name,
+                senderEmail: document.user_id.email,
                 recipientEmail: recipient.email,
-                documentName:   document.file_name,
-                accessId:       access._id,
-                permission:     mode,
+                documentName: document.file_name,
+                documentId: document._id,
+                accessId: access._id,
+                permission: mode,
             });
         }
 
-        const shareUrl = is_public
-            ? `${process.env.FRONTEND_URL}/shared/${doc_id}`
-            : null;
+        const accessUri = access ? `${process.env.FRONTEND_URL}/shared/${access._id}?doc=${document._id}` : null;
 
-        res.status(201).json({ message: "Access request sent successfully", toast: true, url: shareUrl });
+        return res.status(201).json({
+            message: 'Access shared successfully',
+            toast: true,
+            accessUri
+        });
+
     } catch (error) {
-        console.error("Error sending access request:", error);
+        console.error('Error sending access request:', error);
         next(error);
     }
 };
+
+
 
 const enableFileEditing = async (req, res, next) => {
     try {
         const { accessId } = req.body;
         const userId = req.userId;
-console.log('req.body :>> ', req.body);
         const access = await Access.findById(accessId);
         if (!access || access.deletedAt) {
             return res.status(403).json({ message: "This invitation link is invalid or has expired." });
@@ -74,40 +122,64 @@ console.log('req.body :>> ', req.body);
 
         access.enabled = true;
         const updatedAccess = await access.save();
-        
-        res.status(200).json({ message: "Editing enabled. You can now edit the document.", access: updatedAccess, toast: true});
+
+        res.status(200).json({ message: "Editing enabled. You can now edit the document.", access: updatedAccess, toast: true });
     } catch (error) {
         next(error);
     }
 }
 
+
 /* ── Get shared document details (+ access metadata) ────────────── */
 const getSharedDocument = async (req, res, next) => {
     try {
-        const { accessId } = req.query;
+        const { accessId, documentId } = req.query;
+        console.log('doc---------------------->', req.query)
         const userId = req.userId;
-
-        const access = await Access.findById(accessId);
-        if (!access || access.deletedAt || !access.enabled) {
-            return res.status(403).json({ message: "This invitation link is invalid or has expired." });
+        let user = null;
+        if (userId !== "UNAUTHORIZED_USER") {
+            user = await User.findOne({ _id: userId, status: true })
         }
+        console.log('userId', userId)
+        let access = null;
 
-        // Only the intended recipient may open the link
-        if (access.recipientId.toString() !== userId) {
-            return res.status(403).json({ message: "You do not have permission to view this document." });
-        }
+        const document = await Document.findById(documentId)
 
-        const document = await Document.findById(access.documentId);
+        console.log('document', document)
         if (!document) {
-            return res.status(404).json({ message: "Document not found." });
+            throw new AppError('Document not found', 404);
         }
+
+        if (document.visibility === "public") {
+            access = await Access.findById(accessId);
+            if (!access) {
+                
+            }
+            return res.status(200).json({
+                document, user,
+                access: {
+                    _id: access ? access._id : null,
+                    permission: access ? access.permission : "viewer",
+                },
+            });
+        } else {
+            if (!user) {
+                throw new AppError('Sign in to view this document', 400);
+            }
+
+            access = await Access.findOne({ documentId, recipientId: userId, deletedAt: null });
+            if (!access) {
+                throw new AppError('You do not have access to this document', 403);
+            }
+        }
+
+
 
         res.status(200).json({
-            document,
+            document, user,
             access: {
-                _id:        access._id,
+                _id: access._id,
                 permission: access.permission,
-                status:     access.status,
             },
         });
     } catch (error) {
@@ -120,11 +192,11 @@ const getSharedFileList = async (req, res, next) => {
         const { accessId } = req.query;
         const userId = req.userId;
 
-        const sharedFiles = await Access.find({recipientId: userId, deletedAt: null})
-        .populate("ownerId")
-        .populate("documentId");
-       
-        res.status(200).json({  sharedFiles });
+        const sharedFiles = await Access.find({ recipientId: userId, deletedAt: null })
+            .populate("ownerId")
+            .populate("documentId");
+
+        res.status(200).json({ sharedFiles });
     } catch (error) {
         next(error);
     }
@@ -164,34 +236,55 @@ const getSharedDocumentTextBlocks = async (req, res, next) => {
 /* ── List users who already have access to a document ────────────── */
 const getDocumentAccessList = async (req, res, next) => {
     try {
+
         const { doc_id } = req.query;
+
         const userId = req.userId;
 
-        console.log('doc_id :>> ', doc_id);
-        const document = await Document.findById(doc_id);
-        console.log('document.user_id :>> ', document.user_id);
-        if (!document || document.user_id.toString() !== userId) {
-            return res.status(403).json({ message: "Access denied." });
+        // Find document
+        const document = await Document.findOne({
+            _id: doc_id,
+            deletedAt: null,
+        });
+
+        // Document not found
+        if (!document) {
+            throw new AppError('Document not found', 404);
         }
 
-        
-        const accessList = await Access.find({ documentId: doc_id, deletedAt: null })
-            .populate("recipientId", "name email picture");
-        
-            console.log('accessList :>> ', accessList);
-        if(accessList.length === 0) {
-            await Access.create({
-                ownerId: userId,
-                recipientId: null,
-                documentId: doc_id,
-                status: "accepted",
-                permission: "read",
-            });
+        // Only owner can view access list
+        if (document.visibility === "private" && document.user_id.toString() !== userId.toString()) {
+            throw new AppError('You do not have access to this document', 403);
         }
 
-        res.status(200).json({ accessList });
+        // Get all access entries
+        const accessList = await Access.find({
+            documentId: doc_id,
+            deletedAt: null,
+            enabled: true,
+        })
+            .populate('recipientId', 'name email picture')
+            .sort({ createdAt: -1 });
+
+        // Public access entry
+        const publicAccess = accessList.find(
+            (item) => item.visibility === 'public'
+        );
+
+        // Public share URL
+        const publicShareUrl = publicAccess
+            ? `${process.env.FRONTEND_URL}/shared/${publicAccess._id}`
+            : null;
+
+        res.status(200).json({
+            accessList,
+            documentVisibility: document.visibility,
+        });
+
     } catch (error) {
-        console.log('error :>> ', error);
+
+        console.error('Error fetching access list:', error);
+
         next(error);
     }
 };

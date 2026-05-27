@@ -126,13 +126,13 @@ const DocumentUpload = ({ onSubmit }) => {
 
                         {/* Accepted formats */}
                         <div className="flex items-center gap-2 mt-1">
-                            <span className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 px-2 py-0.5 rounded-full">
+                            <span className="flex items-center gap-1 text-xs text-neutral-400 border border-neutral-400 px-2 py-0.5 rounded-full">
                                 <FaFileWord size={10} /> DOCX
                             </span>
-                            <span className="flex items-center gap-1 text-xs text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 px-2 py-0.5 rounded-full">
+                            <span className="flex items-center gap-1 text-xs text-neutral-400 border border-neutral-400 px-2 py-0.5 rounded-full">
                                 <FaFilePowerpoint size={10} /> PPTX
                             </span>
-                            <span className="flex items-center gap-1 text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-2 py-0.5 rounded-full">
+                            <span className="flex items-center gap-1 text-xs text-neutral-400 border border-neutral-400 px-2 py-0.5 rounded-full">
                                 <FaFilePdf size={10} /> PDF
                             </span>
                         </div>

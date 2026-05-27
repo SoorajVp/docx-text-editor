@@ -20,7 +20,7 @@ const GetUserList = async (req, res, next) => {
                 { name: { $regex: search, $options: "i" } },
                 { email: { $regex: search, $options: "i" } },
             ],
-        }).select("name email picture")
+        }).select("_id name email picture")
         res.status(200).json({ message: `User List fetched`, users })
     } catch (error) {
         next(error)

@@ -10,9 +10,6 @@ const ViewerHeader = ({ handleEditing, editable, document, permission, onSave, o
     const { user_data } = useSelector((store) => store.user);
     const isWrite = permission === "write";
 
-    
-
-
     return (
         <header className="flex w-full items-center justify-between bg-neutral-300 dark:bg-black px-6 py-3 font-serif border-b border-neutral-400 dark:border-neutral-800 z-20 flex-shrink-0">
 
@@ -56,7 +53,7 @@ const ViewerHeader = ({ handleEditing, editable, document, permission, onSave, o
                 </button>
 
                 {/* Save Changes — write only */}
-                {editable && (
+                {(user_data && editable) && (
                     <button
                         onClick={onSave}
                         disabled={isSaving}
@@ -74,7 +71,7 @@ const ViewerHeader = ({ handleEditing, editable, document, permission, onSave, o
                 )}
 
                 {/* Permission badge */}
-                {editable ? (
+                {(user_data && editable) ? (
                     <span className="flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-semibold
                         bg-orange-100 dark:bg-orange-900/30
                         text-orange-700 dark:text-orange-300
@@ -83,22 +80,22 @@ const ViewerHeader = ({ handleEditing, editable, document, permission, onSave, o
                         Can Edit
                     </span>
                 ) : (
-                        permission === "write" ?
-                            <button onClick={handleEditing} className="flex items-center gap-1.5 px-2.5 py-2 rounded text-xs font-semibold
+                    permission === "write" ?
+                        <button onClick={handleEditing} className="flex items-center gap-1.5 px-2.5 py-2 rounded text-xs font-semibold
                         bg-orange-100 dark:bg-orange-900/30
                         text-orange-700 dark:text-orange-300
                         border border-orange-200 dark:border-orange-800">
-                        <RiEditFill size={12} />
-                        Enable Editing
-                    </button> :
-                        
-                    <span className="flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-semibold
+                            <RiEditFill size={12} />
+                            Enable Editing
+                        </button> :
+
+                        <span className="flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-semibold
                         bg-gray-100 dark:bg-neutral-800
                         text-gray-500 dark:text-gray-400
                         border border-gray-200 dark:border-neutral-700">
-                        Read Only
+                            Read Only
                         </span>
-                        
+
                 )}
 
                 {/* Notifications */}

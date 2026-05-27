@@ -188,7 +188,7 @@ const SharedFiles = () => {
                             : filtered.map((item) => (
                                 <Link
                                     key={item._id}
-                                    to={`/shared/${item._id}`}
+                                    to={`/shared/${item._id}?doc=${item.documentId?._id}`}
                                     className="flex justify-between items-center rounded border
                                         border-neutral-300 dark:border-neutral-700
                                         hover:border-orange-400 dark:hover:border-orange-600

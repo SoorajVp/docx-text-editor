@@ -1,8 +1,6 @@
 import axios from "axios";
 import JSZip from "jszip";
-import path from "path";
 import { DOMParser, XMLSerializer } from "@xmldom/xmldom";
-import cloudinary from "../config/cloudinary.js";
 
 const ConvertDocToXML = async (docUrl) => {
     // Fetch the document from the URL
@@ -15,21 +13,7 @@ const ConvertDocToXML = async (docUrl) => {
     return documentXml
 }
 
-const cloudinaryUpload = async (fileBuffer, fileName, folder) => {
 
-    if (fileName.toLowerCase().endsWith(".pdf")) {
-        fileName = path.basename(fileName, path.extname(fileName));
-    }
-    return new Promise((resolve, reject) => {
-        cloudinary.uploader.upload_stream(
-            { resource_type: "auto", folder, public_id: fileName },
-            (error, result) => {
-                if (error) reject(error);
-                else resolve(result);
-            }
-        ).end(fileBuffer);
-    });
-};
 
 
 // Function to get the filename and add a random number
@@ -324,7 +308,6 @@ const PptxTextBlocksFromUrl = async (fileUrl) => {
 
 export default { 
     GenerateFileName, 
-    cloudinaryUpload, 
     GetFileExtFromMimeType, 
     DocxTextBlocksFromUrl, 
     UpdateDocxDocument, 

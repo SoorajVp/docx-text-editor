@@ -28,9 +28,9 @@ const accessService = {
         }
     },
 
-    GetSharedDocument: async (accessId) => {
+    GetSharedDocument: async (accessId, documentId) => {
         try {
-            const response = await apiClient.get(`/access/shared-document?accessId=${accessId}`);
+            const response = await apiClient.get(`/access/shared-document?accessId=${accessId}&documentId=${documentId}`);
             return response.data;
         } catch (error) {
             throw error;

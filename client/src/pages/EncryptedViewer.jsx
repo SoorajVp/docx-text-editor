@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setPageLoading, setUserDetails } from "../redux/slice/userSlice";
 import accessService from "../api/services/access";
@@ -12,6 +12,7 @@ import PptxEditor from "../components/editor/pptx/PptxEditor";
 import { GetFileExtension, DownloadFile } from "../utils/helper";
 import MiniLoading from "../components/loading/MiniLoading";
 import { IoFileTrayFullSharp } from "react-icons/io5";
+import Header from "../components/layout/Header";
 
 /* ── Sign-in wall shown when user is not authenticated ── */
 const SignInWall = () => (
@@ -60,58 +61,46 @@ const SignInWall = () => (
 /* ── Main component ── */
 const EncryptedViewer = () => {
     const { accessId } = useParams();
+    const [searchParams] = useSearchParams();
+
+    const documentId = searchParams.get('doc');
     const dispatch = useDispatch();
     const { user_data, darkMode } = useSelector((store) => store.user);
 
-    const [document, setDocument]     = useState(null);
-    const [access, setAccess]         = useState(null);
+    const [document, setDocument] = useState(null);
+    const [access, setAccess] = useState(null);
     const [textBlocks, setTextBlocks] = useState([]);
-    const [userReady, setUserReady]   = useState(false);   // user fetch done
-    const [loading, setLoading]       = useState(false);
-    const [error, setError]           = useState(null);
-    const [isSaving, setIsSaving]     = useState(false);
+    const [restricted, setRestricted] = useState(false);   // user fetch done
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [isSaving, setIsSaving] = useState(false);
 
-    const token      = localStorage.getItem("auth_token");
-    const permission = access?.permission ?? "read";
-    const isWrite    = permission === "write";
-    const fileExt    = GetFileExtension(document?.mime_type);
+    const token = localStorage.getItem("auth_token");
+    const permission = access?.permission ?? "viewer";
+    const isWrite = permission === "editor";
+    const fileExt = GetFileExtension(document?.mime_type);
     const isEditable = access?.enabled;
 
-    /* ── Step 1: fetch user details if token exists ── */
-    useEffect(() => {
-        if (!token) {
-            setUserReady(true); // no token → show sign-in wall, skip everything
-            return;
-        }
-        if (user_data) {
-            setUserReady(true); // already in Redux
-            return;
-        }
-        const fetchUser = async () => {
-            try {
-                const { user } = await userService.GetUserDetails();
-                dispatch(setUserDetails({ user }));
-            } catch {
-                // expired / invalid token — clear it so sign-in wall renders
-                localStorage.removeItem("auth_token");
-            } finally {
-                setUserReady(true);
-            }
-        };
-        fetchUser();
-    }, []);
 
     /* ── Step 2: load document once user state is resolved ── */
     useEffect(() => {
-        if (!userReady || !token) return;
+        if (!accessId) return;
 
         const load = async () => {
             setLoading(true);
             setError(null);
             try {
-                const res = await accessService.GetSharedDocument(accessId);
+                const res = await accessService.GetSharedDocument(accessId, documentId);
                 setDocument(res.document);
                 setAccess(res.access);
+                if (res.restricted) {
+                    setRestricted(true);
+                } else {
+                    if (res.user) {
+                        dispatch(setUserDetails({ user: res.user }));
+                    }
+                }
+
             } catch (err) {
                 setError(err?.response?.data?.message || "Failed to load the shared document.");
             } finally {
@@ -119,7 +108,7 @@ const EncryptedViewer = () => {
             }
         };
         load();
-    }, [userReady]);
+    }, [accessId]);
 
     /* ── Step 3: fetch text blocks once we know it's write + editable ── */
     useEffect(() => {
@@ -130,7 +119,7 @@ const EncryptedViewer = () => {
                 setTextBlocks(res.textBlocks || []);
             } catch (err) {
                 // leave editor empty
-                console.warn("Failed to load document text blocks. Editor will be empty.", err);    
+                console.warn("Failed to load document text blocks. Editor will be empty.", err);
             }
         };
         fetchBlocks();
@@ -143,11 +132,11 @@ const EncryptedViewer = () => {
         }
         try {
             const response = await accessService.enableFileEditing({ accessId });
-        setAccess(response.access);
+            setAccess(response.access);
         } catch (error) {
             console.log('error :>> ', error);
         }
-        
+
     };
 
     /* ── Handlers ── */
@@ -169,10 +158,10 @@ const EncryptedViewer = () => {
     };
 
     /* ── Not logged in → sign-in wall ── */
-    if (userReady && !token) return <SignInWall />;
+    if (restricted) return <SignInWall />;
 
     /* ── Loading ── */
-    if (!userReady || loading) {
+    if (loading) {
         return (
             <div className="flex h-screen w-screen items-center justify-center bg-white dark:bg-neutral-950">
                 <MiniLoading />
@@ -198,28 +187,39 @@ const EncryptedViewer = () => {
     return (
         <div className={`flex flex-col h-screen w-screen overflow-hidden bg-white dark:bg-neutral-950 ${darkMode ? "dark" : ""}`}>
 
-            <ViewerHeader
-                handleEditing={handleEditing}
-                editable={isEditable}
-                document={document}
-                permission={permission}
-                onSave={handleSave}
-                onDownload={handleDownload}
-                isSaving={isSaving}
-            />
+            {
+                user_data ?
+                    <Header handleEditing={handleEditing}
+                        editable={isEditable}
+                        document={document}
+                        permission={permission}
+                        onSave={handleSave}
+                        onDownload={handleDownload}
+                        isSaving={isSaving}  /> :
+                    
+                    <ViewerHeader
+                        handleEditing={handleEditing}
+                        editable={isEditable}
+                        document={document}
+                        permission={permission}
+                        onSave={handleSave}
+                        onDownload={handleDownload}
+                        isSaving={isSaving}
+                    />
+            }
 
             <div className="flex flex-1 overflow-hidden bg-gradient-to-b from-white to-neutral-300 dark:from-neutral-800 dark:to-neutral-950">
 
                 {/* Document preview */}
-                <div className={`h-full overflow-auto ${isEditable ? "hidden md:flex md:w-1/2" : "flex flex-1 justify-center"}`}>
-                    <div className={isEditable ? "w-full" : "w-full max-w-4xl"}>
+                <div className={`h-full overflow-auto  ${isEditable ? "hidden md:flex md:w-1/2" : "flex flex-1 justify-center"}`}>
+                    <div className={isEditable ? "w-full" : "w-full max-w-3xl mx-auto"}>
                         <DocumentViewer url={document?.url} mime_type={fileExt} />
                     </div>
                 </div>
 
                 {/* Editor — write + docx/pptx only */}
                 {isEditable && (
-                    <div className="md:w-1/2 w-full h-full overflow-auto border-l border-gray-200 dark:border-neutral-800">
+                    <div className="md:w-1/2 w-full h-full overflow-auto max-w-3xl mx-auto border-l border-gray-200 dark:border-neutral-800">
                         {fileExt === "docx" && (
                             <DocxEditor textBlocks={textBlocks} setTextBlocks={setTextBlocks} loading={loading} />
                         )}
@@ -233,8 +233,8 @@ const EncryptedViewer = () => {
                 {isWrite && !isEditable && (
                     <div className="absolute bottom-4 right-4">
                         <span className="px-3 py-1.5 rounded text-xs font-medium bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800">
-                            Preview only — this file type cannot be edited 
-                        </span> 
+                            Preview only — this file type cannot be edited
+                        </span>
 
                     </div>
                 )}

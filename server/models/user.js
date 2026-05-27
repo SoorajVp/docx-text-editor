@@ -1,51 +1,80 @@
 import mongoose from 'mongoose';
 
-// Define the schema for the User model
 const userSchema = new mongoose.Schema(
     {
+        googleId: {
+            type: String,
+            unique: true,
+            sparse: true,
+        },
+
         name: {
             type: String,
             required: true,
-            trim: true, // Removes whitespace from both ends of the string
+            trim: true,
         },
-        given_name: {
+
+        givenName: {
             type: String,
-            required: true,
-            trim: true, // Removes whitespace from both ends of the string
+            trim: true,
         },
-        family_name: {
+
+        familyName: {
             type: String,
-            required: true,
-            trim: true, // Removes whitespace from both ends of the string
+            trim: true,
         },
+
+        username: {
+            type: String,
+            unique: true,
+            sparse: true,
+            trim: true,
+        },
+
         email: {
             type: String,
             required: true,
             unique: true,
-            trim: true,
             lowercase: true,
+            trim: true,
+            index: true,
         },
+
         picture: {
             type: String,
-            required: true,
         },
+
+        role: {
+            type: String,
+            enum: ['user', 'admin'],
+            default: 'user',
+        },
+
+        theme: {
+            type: String,
+            enum: ['light', 'dark'],
+            default: 'light',
+        },
+
         status: {
             type: Boolean,
             default: true,
         },
-        theme: {
-            type: String,
-            enum: ['light', 'dark'], // Optional: Define theme
-            default: 'light',
+
+        lastLoginAt: {
+            type: Date,
         },
 
+        deletedAt: {
+            type: Date,
+            default: null,
+        },
     },
     {
-        timestamps: true, // Automatically adds `createdAt` and `updatedAt` fields
+        timestamps: true,
     }
 );
 
-// Create and export the model
 const User = mongoose.model('User', userSchema);
 
 export default User;

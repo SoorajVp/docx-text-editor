@@ -3,6 +3,7 @@ import cloudinary from "../config/cloudinary.js";
 import JSZip from "jszip";
 import axios from "axios";
 import helper from "../utils/helper.js";
+import uploadService from "../utils/uploadService.js";
 import Document from "../models/document.js";
 import AppError from "../utils/appError.js";
 
@@ -11,7 +12,7 @@ const CreateDocument = async (req, res, next) => {
         const _id = req.userId
         const { buffer, originalname, size, mimetype } = req.file
         // Convert file buffer to Cloudinary stream upload
-        const result = await helper.cloudinaryUpload(buffer, originalname, "documents")
+        const result = await uploadService.cloudinaryUpload(buffer, originalname, "documents")
 
         const documentDetails = {
             user_id: _id,
@@ -172,6 +173,25 @@ const UpdateDocument = async (req, res, next) => {
 };
 
 
+const ChangeVisibility = async (req, res, next) => {
+    const { id, visibility } = req.query;
+    try {
+        const document = await Document.findByIdAndUpdate(
+            id,
+            { visibility },
+            { new: true }
+        );
+
+        if (!document) {
+            throw new AppError('Document not found', 404);
+        }
+
+        res.status(200).json({ message: 'Document visibility updated successfully', document, toast: true });
+    } catch (error) {
+        next(error)
+    }
+};
+
 const SoftDeleteDocument = async (req, res, next) => {
     const { id } = req.query;
     try {
@@ -250,4 +270,10 @@ const DeleteDocuments = async (req, res, next) => {
 
 
 
-export default { GetDocumentById, UpdateFileNameById, GetDocumentTexts, UpdateDocument, CreateDocument, GetDocumentList, SoftDeleteDocument, RestoreDocuments, GetDeletedDocumentList, DeleteDocuments }
+export default {
+    GetDocumentById,
+    UpdateFileNameById,
+    GetDocumentTexts,
+    UpdateDocument,
+    CreateDocument, GetDocumentList, ChangeVisibility, SoftDeleteDocument, RestoreDocuments, GetDeletedDocumentList, DeleteDocuments
+}
