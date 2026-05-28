@@ -7,7 +7,7 @@ import { setPageLoading, setUserDetails, setUserLoggout, toggleDarkMode } from "
 import userService from "../api/services/user";
 import ConfirmationModal from "./modals/AlertModal";
 
-const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
+const Profile = ({ name, first_name, last_name, email, picture, theme }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -16,8 +16,8 @@ const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
     const navigate = useNavigate();
 
     const [user, setUser] = useState({
-        firstName: given_name || "",
-        lastName: family_name || "",
+        first_name: first_name || "",
+        last_name: last_name || "",
         picture: picture || "",
         email: email || "",
         documents: 0,
@@ -26,14 +26,14 @@ const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
 
     useEffect(() => {
         setUser({
-            firstName: given_name || "",
-            lastName: family_name || "",
+            first_name: first_name || "",
+            last_name: last_name || "",
             picture: picture || "",
             email: email || "",
             documents: 0,
             theme: theme || "light",
         });
-    }, [given_name, family_name, picture, name, theme]);
+    }, [first_name, last_name, picture, name, theme]);
 
     const handleInputChange = (e) => {
         const { name, value, files } = e.target;
@@ -55,8 +55,8 @@ const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
 
     const handleSubmit = async () => {
         const formData = new FormData();
-        formData.append("given_name", user.firstName);
-        formData.append("family_name", user.lastName);
+        formData.append("first_name", user.first_name);
+        formData.append("last_name", user.last_name);
         formData.append("theme", user.theme);
 
         if (selectedImage) {
@@ -83,8 +83,8 @@ const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
 
     const HandleDiscard = () => {
         setUser({
-            firstName: given_name || "",
-            lastName: family_name || "",
+            first_name: first_name || "",
+            last_name: last_name || "",
             picture: picture || "",
             email: email || "",
             documents: 0,
@@ -112,13 +112,13 @@ const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
                                         {isEditing ? (
                                             <input
                                                 type="text"
-                                                name="firstName"
-                                                value={user.firstName}
+                                                name="first_name"
+                                                value={user.first_name}
                                                 onChange={handleInputChange}
                                                 className="block w-full text-sm rounded bg-white dark:bg-black text-black dark:text-neutral-200 border border-gray-400 dark:border-gray-700 focus:border-orange-500 dark:focus:border-orange-300 outline-none transition duration-500 ease-in-out px-2 py-1.5"
                                             />
                                         ) : (
-                                            <p className="py-1"> : {user.firstName}</p>
+                                                <p className="py-1"> : {user.first_name}</p>
                                         )}
                                     </td>
                                 </tr>
@@ -128,13 +128,13 @@ const Profile = ({ name, given_name, family_name, email, picture, theme }) => {
                                         {isEditing ? (
                                             <input
                                                 type="text"
-                                                name="lastName"
-                                                value={user.lastName}
+                                                name="last_name"
+                                                value={user.last_name}
                                                 onChange={handleInputChange}
                                                 className="block w-full text-sm rounded bg-white dark:bg-black text-black dark:text-neutral-200 border border-gray-400 dark:border-gray-700 focus:border-orange-500 dark:focus:border-orange-300 outline-none transition duration-500 ease-in-out px-2 py-1.5"
                                             />
                                         ) : (
-                                            <p className="py-1"> : {user.lastName}</p>
+                                            <p className="py-1"> : {user.last_name}</p>
                                         )}
                                     </td>
                                 </tr>

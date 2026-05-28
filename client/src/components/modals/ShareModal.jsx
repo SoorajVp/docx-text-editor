@@ -30,6 +30,7 @@ const ShareModal = ({ onClose, onShare, documentId }) => {
             setAccessLoading(true);
             try {
                 const res = await accessService.GetDocumentAccessList(documentId);
+                console.log('selectedUsers', res)
                 setExistingAccess(res?.accessList || []);
             } catch {
                 setExistingAccess([]);
@@ -39,6 +40,9 @@ const ShareModal = ({ onClose, onShare, documentId }) => {
         };
         load();
     }, [documentId]);
+
+    console.log('existingAccess', existingAccess)
+    console.log('selectedUsers', selectedUsers)
 
     /* ── Search ── */
     const fetchUsers = async (value) => {
@@ -64,7 +68,7 @@ const ShareModal = ({ onClose, onShare, documentId }) => {
 
     /* ── Users ── */
     const addUser = (user) => {
-        if (selectedUsers.find((u) => u._id === user._id)) return;
+        if ([...selectedUsers.map((u) => u.email), ...existingAccess.map((a) => a.recipientId?.email)].find((u) => u === user.email)) return;
         setSelectedUsers((prev) => [...prev, user]);
         setQuery("");
         setResults([]);
@@ -86,7 +90,7 @@ const ShareModal = ({ onClose, onShare, documentId }) => {
         try {
             const payload = {
                 doc_id: documentId,
-                emails: [...selectedUsers.map((u) => u.email),... existingAccess.map((a) => a.recipientId?.email)],
+                emails: [...selectedUsers.map((u) => u.email), ...existingAccess.map((a) => a.recipientId?.email)],
                 mode: permission === "edit" ? "write" : "read",
                 visibility: linkAccess === "anyone" ? "public" : "private",
             };
@@ -94,7 +98,7 @@ const ShareModal = ({ onClose, onShare, documentId }) => {
             if (response?.accessUri) setSharedUrl(response.accessUri);
             // Refresh existing access list
             const fresh = await accessService.GetDocumentAccessList(documentId);
-            setExistingAccess(fresh?.accessList || []); 
+            setExistingAccess(fresh?.accessList || []);
             setSelectedUsers([]);
         } catch (error) {
             console.error("Share failed:", error);
@@ -197,7 +201,7 @@ const ShareModal = ({ onClose, onShare, documentId }) => {
                                                     <p className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">{user.name}</p>
                                                     <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
                                                 </div>
-                                                {selectedUsers.find((u) => u._id === user._id) && (
+                                                {[...selectedUsers.map((u) => u.email), ...existingAccess.map((a) => a.recipientId?.email)].find((u) => u === user.email) && (
                                                     <IoCheckmark size={15} className="ml-auto text-orange-500 flex-shrink-0" />
                                                 )}
                                             </div>

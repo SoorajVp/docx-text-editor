@@ -89,7 +89,10 @@ const sendAccessInviation = async (req, res, next) => {
             });
         }
 
-        const accessUri = access ? `${process.env.FRONTEND_URL}/shared/${access._id}?doc=${document._id}` : null;
+        let accessUri = null;
+        if (document.visibility === "public") {
+            accessUri = access ? `${process.env.FRONTEND_URL}/shared/${document.user_id._id}?doc=${document._id}` : null;
+        }
 
         return res.status(201).json({
             message: 'Access shared successfully',
@@ -134,27 +137,21 @@ const enableFileEditing = async (req, res, next) => {
 const getSharedDocument = async (req, res, next) => {
     try {
         const { accessId, documentId } = req.query;
-        console.log('doc---------------------->', req.query)
         const userId = req.userId;
         let user = null;
         if (userId !== "UNAUTHORIZED_USER") {
             user = await User.findOne({ _id: userId, status: true })
         }
-        console.log('userId', userId)
         let access = null;
 
         const document = await Document.findById(documentId)
 
-        console.log('document', document)
         if (!document) {
             throw new AppError('Document not found', 404);
         }
 
         if (document.visibility === "public") {
             access = await Access.findById(accessId);
-            if (!access) {
-                
-            }
             return res.status(200).json({
                 document, user,
                 access: {
@@ -183,6 +180,7 @@ const getSharedDocument = async (req, res, next) => {
             },
         });
     } catch (error) {
+        console.log('error', error)
         next(error);
     }
 };

@@ -13,28 +13,51 @@ const GetUserDetails = async (req, res, next) => {
 
 const GetUserList = async (req, res, next) => {
     try {
-        const { search } = req.query
+
+        const { search = '' } = req.query;
+
+        const userId = req.userId;
+
         const users = await User.find({
+            _id: { $ne: userId }, // exclude current user
+
             email: { $exists: true },
+
             $or: [
-                { name: { $regex: search, $options: "i" } },
-                { email: { $regex: search, $options: "i" } },
+                {
+                    name: {
+                        $regex: search,
+                        $options: "i"
+                    }
+                },
+                {
+                    email: {
+                        $regex: search,
+                        $options: "i"
+                    }
+                },
             ],
-        }).select("_id name email picture")
-        res.status(200).json({ message: `User List fetched`, users })
+        })
+            .select("_id name email picture");
+
+        res.status(200).json({
+            message: 'User List fetched',
+            users
+        });
+
     } catch (error) {
-        next(error)
+        next(error);
     }
-}
+};
 
 const UpdateUser = async (req, res, next) => {
     try {
-        const { given_name, family_name, theme } = req.body;
+        const { first_name, last_name, theme } = req.body;
         const _id = req.userId;
 
         const user_details = {
-            name: given_name + " " + family_name,
-            given_name, family_name, theme
+            name: first_name + " " + last_name,
+            first_name, last_name, theme
         }
 
         if (req.file) {

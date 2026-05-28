@@ -187,27 +187,15 @@ const EncryptedViewer = () => {
     return (
         <div className={`flex flex-col h-screen w-screen overflow-hidden bg-white dark:bg-neutral-950 ${darkMode ? "dark" : ""}`}>
 
-            {
-                user_data ?
-                    <Header handleEditing={handleEditing}
-                        editable={isEditable}
-                        document={document}
-                        permission={permission}
-                        onSave={handleSave}
-                        onDownload={handleDownload}
-                        isSaving={isSaving}  /> :
-                    
-                    <ViewerHeader
-                        handleEditing={handleEditing}
-                        editable={isEditable}
-                        document={document}
-                        permission={permission}
-                        onSave={handleSave}
-                        onDownload={handleDownload}
-                        isSaving={isSaving}
-                    />
-            }
-
+            <ViewerHeader
+                handleEditing={handleEditing}
+                editable={isEditable}
+                document={document}
+                permission={permission}
+                onSave={handleSave}
+                onDownload={handleDownload}
+                isSaving={isSaving}
+            />
             <div className="flex flex-1 overflow-hidden bg-gradient-to-b from-white to-neutral-300 dark:from-neutral-800 dark:to-neutral-950">
 
                 {/* Document preview */}

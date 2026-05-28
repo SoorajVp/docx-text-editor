@@ -14,20 +14,13 @@ const userSchema = new mongoose.Schema(
             trim: true,
         },
 
-        givenName: {
+        last_name: {
             type: String,
             trim: true,
         },
 
-        familyName: {
+        first_name: {
             type: String,
-            trim: true,
-        },
-
-        username: {
-            type: String,
-            unique: true,
-            sparse: true,
             trim: true,
         },
 

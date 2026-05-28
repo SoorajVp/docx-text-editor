@@ -6,7 +6,7 @@ const GoogleLogin = async (req, res, next) => {
         const { given_name, family_name, name, email, picture } = req.body
         let user = await User.findOne({ email });
         if (!user) {
-            user = await User.create({ given_name, family_name, name, email, picture })
+            user = await User.create({ first_name:given_name, last_name:family_name, name, email, picture })
         }
         const token = generateToken(user?.id);
         res.status(201).json({ message: `${given_name} signed in successfully `, user, token, toast: true })

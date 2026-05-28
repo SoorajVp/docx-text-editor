@@ -5,13 +5,14 @@ import { IoMdDownload } from "react-icons/io";
 import { MdSave } from "react-icons/md";
 import { RiEditFill } from "react-icons/ri";
 import { getFileNameOG } from "../../utils/helper";
+import { FaRegFolderOpen } from "react-icons/fa";
 
 const ViewerHeader = ({ handleEditing, editable, document, permission, onSave, onDownload, isSaving }) => {
     const { user_data } = useSelector((store) => store.user);
     const isWrite = permission === "write";
 
     return (
-        <header className="flex w-full items-center justify-between bg-neutral-300 dark:bg-black px-6 py-3 font-serif border-b border-neutral-400 dark:border-neutral-800 z-20 flex-shrink-0">
+        <header className="flex w-full items-center justify-between bg-neutral-300 z-20 dark:bg-black px-6 py-3 font-serif">
 
             {/* ── Left: logo + doc name ── */}
             <div className="flex items-center gap-3 min-w-0">
@@ -104,19 +105,20 @@ const ViewerHeader = ({ handleEditing, editable, document, permission, onSave, o
                 />
 
                 {/* Profile / Sign In */}
+                {
+                    user_data && (
+                        <Link to="/shared" className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded font-medium border transition-all duration-200
+                                    border-orange-400 text-orange-600 bg-orange-50 hover:bg-orange-500 hover:text-white hover:border-orange-500
+                                    dark:border-orange-600 dark:text-orange-400 dark:bg-orange-950/30 dark:hover:bg-orange-500 dark:hover:text-white dark:hover:border-orange-500">
+                            <FaRegFolderOpen size={14} />
+                            Shared
+                        </Link>
+                    )
+                }
                 {user_data ? (
-                    <Link
-                        to="/profile"
-                        className="flex group items-center gap-2 border border-white hover:border-gray-400 dark:border-gray-700 dark:hover:border-gray-400 p-1 rounded-full transition-all ease-in-out duration-300"
-                    >
-                        <h3 className="pl-4 group-hover:text-orange-700 dark:group-hover:text-orange-300 cursor-pointer transition-all ease-in-out duration-300 text-sm">
-                            Profile
-                        </h3>
-                        <img
-                            src={user_data?.picture || "https://ionicframework.com/docs/img/demos/avatar.svg"}
-                            alt="profile"
-                            className="h-8 w-8 rounded-full object-cover object-center"
-                        />
+                    <Link to="/profile" className="flex group items-center gap-2 border border-white hover:border-gray-400 dark:border-gray-700 dark:hover:border-gray-400 p-1 rounded-full transition-all ease-in-out duration-300">
+                        <h3 className="pl-4 group-hover:text-orange-700 dark:group-hover:text-orange-300 cursor-pointer transition-all ease-in-out duration-300">Profile</h3>
+                        <img src={user_data?.picture || "https://ionicframework.com/docs/img/demos/avatar.svg"} alt="logo" className="h-8 w-8 rounded-full object-cover object-center" />
                     </Link>
                 ) : (
                     <Link
